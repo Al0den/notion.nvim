@@ -62,3 +62,9 @@ require"notion".nextEventName()
 --Get next event date
 require"notion".nextEventDate()
 ```
+
+## Roadmap
+
+- Extend available functions list
+- Create menu with all future events
+- Add events/reminder creation feature
