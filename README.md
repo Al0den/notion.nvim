@@ -47,6 +47,18 @@ require'lualine'.setup {
     ...
 }
 ```
+## How to use
+
+The default configuration is:
+
+```lua
+require"notion".setup {
+    autoUpdate = true,
+    updateDelay = 60000
+}
+```
+
+It can of course be overwritten. If you want to manually handle data update, `:NotionUpdate` or `require"notion".update()`. Those commands aren't meant to return anything apart errors, you'll need to call `require"notion".raw()` to get the new data, after it has been updated (asynchronous)
 
 ## Customisation
 
