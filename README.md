@@ -69,10 +69,10 @@ Available lua functions are, as of right now:
 require"notion".raw()
 
 --Get next event name
-require"notion".nextEventName()
+require"notion.components".nextEventName()
 
 --Get next event date
-require"notion".nextEventDate()
+require"notion.components".nextEventDate()
 ```
 
 ## Roadmap
