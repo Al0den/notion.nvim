@@ -7,13 +7,10 @@ local M = {}
 
 M.request = function(callback)
     local file = io.open(storage, "r")
-    if file == nil then
-        print(storage)
-        vim.print("[Notion] Not correctly configured")
-        return false
-    end
+    if file == nil then return end
 
     local l = file:read("*a")
+
     local data = {
         sort = {
             direction = "ascending",
@@ -52,11 +49,8 @@ M.deleteItem = function(selection)
     local id = raw.ids[selection[1]]
 
     local file = io.open(storage, "r")
-    if file == nil then
-        print(storage)
-        vim.print("[Notion] Not correctly configured")
-        return false
-    end
+
+    if file == nil then return end
 
     local l = file:read("*a")
 

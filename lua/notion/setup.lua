@@ -15,6 +15,7 @@ local tryKey = function()
     local headers = {}
     local storageFile = vim.fn.stdpath("data") .. "/notion-nvim/data.txt"
     local file = io.open(storageFile, "r")
+
     if file == nil then return true end
 
     local l = file:read("*a")
@@ -40,7 +41,7 @@ local noKey = function()
     local storage = vim.fn.stdpath("data") .. "/notion-nvim/data.txt"
     local file = io.open(storage, "w")
     if file == nil then
-        print("problem")
+        return vim.print("[Notion] Incorrect Configuration")
     else
         file:write(newKey)
         file:close()
@@ -49,18 +50,11 @@ local noKey = function()
 end
 
 local notionSetup = function()
-    local storage = vim.fn.stdpath("data") .. "/notion-nvim/"
-    local _, err = os.rename(storage, storage)
-    if err then
-        os.execute("mkdir -p " .. storage)
-    end
-    storage = storage .. "data.txt"
-    local _, err2 = os.rename(storage, storage)
-    if err2 then
-        os.execute("touch " .. storage)
-    end
+    local storage = vim.fn.stdpath("data") .. "/notion-nvim/data.txt"
+
     local file = io.open(storage, "r")
     local l = {}
+
     if file == nil then
         print("[Notion] Please report bug")
     else
