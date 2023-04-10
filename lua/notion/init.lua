@@ -1,8 +1,15 @@
 local M = {}
+
 local initialized = false
 
 local defaults = require "notion.defaults"
 local req = require "notion.request"
+
+local function checkInit()
+    if not initialized then
+        return vim.print("[Notion] Not initialised, please run :NotionSetup")
+    end
+end
 
 local prevStatus = function()
     local path = vim.fn.stdpath("data") .. "/notion-nvim/prev.txt"
@@ -37,7 +44,13 @@ M.update = function()
         return vim.print("[Notion] Not initialised, please run :NotionSetup")
     end
     req.request(function(data) saveData(data) end)
+
+    local path = vim.fn.stdpath("data") .. "/notion-nvim/prev.txt"
+    local file = io.open(path, "w")
+    if file == nil then return false end
+    file:write("true")
 end
+
 local function initialiseFiles()
     local path = vim.fn.stdpath("data") .. "/notion/"
     os.execute("mkdir -p " .. path)
