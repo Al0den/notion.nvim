@@ -33,33 +33,6 @@ local function attach_mappings(prompt_bufnr, map)
     return true
 end
 
-
-
---local function sort(data, dates)
---    local sorted = {}
---    for i, v in pairs(data) do
---        if dates[v] == nil then
---            table.insert(sorted, v)
---            data[i] = nil
---        end
---    end
---    local tmp = {}
---
---    for i, v in pairs(data) do
---        if tmp == {} then
---            tmp = { v }
---        else
---            for k, j in pairs(tmp) do
---                vim.print(tmp)
---                if dates[v] < dates[j] then
---                    table.insert(tmp, v)
---                end
---            end
---        end
---    end
---    return data
---end
-
 M.openFutureEventsMenu = function(opts)
     opts = opts or {}
 
@@ -68,6 +41,21 @@ M.openFutureEventsMenu = function(opts)
     if raw == nil then return end
 
     local data = raw.data
+    local dates = raw.dates
+
+    local function customSort(a, b)
+        local dateA = dates[a] or "99999999"
+        local dateB = dates[b] or "99999999"
+        if dateA == true then dateA = "99999999" end
+        if dateB == true then dateB = "99999999" end
+        if dateA ~= dateB then
+            return dateA < dateB
+        else
+            return a < b
+        end
+    end
+
+    table.sort(data, customSort)
 
     pickers.new(opts, {
         prompt_title = "Notion Future Event's",

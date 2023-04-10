@@ -42,11 +42,13 @@ M.eventList = function(opts)
     local urls = {}
     local ids = {}
     local dates = {}
+    local sorter = {}
     for _, v in pairs(content) do
         if v.properties ~= nil and v.properties.Name ~= nil and v.properties.Name.title[1] ~= nil and compareDates(v) then
             if compareDates(v) == true then
                 dates[v.properties.Name.title[1].plain_text] = compareDates(v)
             else
+                dates[v.properties.Name.title[1].plain_text] = compareDates(v)
                 table.insert(data, v.properties.Name.title[1].plain_text)
             end
             urls[v.properties.Name.title[1].plain_text] = v.url
