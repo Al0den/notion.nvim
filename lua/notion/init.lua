@@ -1,14 +1,10 @@
 local M = {}
+local initialized = false
 
 local defaults = require "notion.defaults"
 local parser = require "notion.parse"
-
-local initialized = false
-
 local req = require "notion.request"
-
-M.latest = ""
-
+local telescope = require "notion.telescope"
 local components = require "notion.components"
 
 local prevStatus = function()
@@ -22,15 +18,34 @@ local prevStatus = function()
     end
 end
 
-M.raw = function()
-    return latest
+local saveData = function(data)
+    local path = vim.fn.stdpath("data") .. "/notion/"
+    os.execute("mkdir -p " .. path)
+    path = path .. "saved.txt"
+    os.execute("touch " .. path)
+    local file = io.open(path, "w")
+    if file == nil then return end
+    file:write(data)
+    file:close()
 end
 
-M.update = function(opts)
+M.raw = function()
+    local path = vim.fn.stdpath("data") .. "/notion/"
+    os.execute("mkdir -p " .. path)
+    path = path .. "saved.txt"
+    os.execute("touch " .. path)
+    local file = io.open(path, "r")
+    if file == nil then return end
+    local l = file:read("*a")
+    file:close()
+    return l
+end
+
+M.update = function()
     if not initialized then
         return vim.print("[Notion] Not initialised, please run :NotionSetup")
     end
-    req.aReq(function(data) latest = data end)
+    req.aReq(function(data) saveData(data) end)
 end
 
 local cycle = function()
@@ -49,7 +64,12 @@ M.setup = function(opts)
 end
 
 M.taste = function()
-    vim.print(components.earliestDate())
+    vim.print(vim.json.decode(parser.parse(latest)))
 end
+
+M.openMenu = function()
+    telescope.openMenu()
+end
+
 
 return M

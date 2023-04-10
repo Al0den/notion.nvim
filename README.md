@@ -73,10 +73,13 @@ require"notion.components".nextEventName()
 
 --Get next event date
 require"notion.components".nextEventDate()
+
+--Display all future events menu
+require"notion".openMenu()
 ```
 
 ## Roadmap
 
 - Extend available functions list
-- Create menu with all future events
+- Create menu with all future events - Already available, but will be improved
 - Add events/reminder creation feature

@@ -32,7 +32,6 @@ M.aReq = function(callback)
         enabled_recording = true,
         on_exit = function(b, code)
             if code == 0 then
-                print("[Notion] Updated")
                 callback(b._stdout_results[1])
             else
                 print("err")
@@ -40,7 +39,7 @@ M.aReq = function(callback)
         end,
     })
 
-    vim.print(job:start())
+    job:start()
 end
 
 return M
