@@ -3,7 +3,6 @@ local initialized = false
 
 local defaults = require "notion.defaults"
 local req = require "notion.request"
-local telescope = require "notion.telescope"
 
 local prevStatus = function()
     local path = vim.fn.stdpath("data") .. "/notion-nvim/prev.txt"
@@ -46,13 +45,20 @@ local function initialiseFiles()
     os.execute("touch " .. path .. "prev.txt")
     os.execute("touch " .. path .. "saved.txt")
 end
+
+local function clearData()
+    os.execute("rm -rf -d -R " .. vim.fn.stdpath("data") .. "/notion/")
+    vim.print("[Notion] Cleared all saved data")
+end
+
 M.setup = function(opts)
     initialiseFiles()
     M.opts = vim.tbl_deep_extend("force", defaults, opts or {})
     vim.api.nvim_create_user_command("NotionSetup", function() initialized = require("notion.setup").initialisation() end,
         {})
     vim.api.nvim_create_user_command("NotionUpdate", function() M.update() end, {})
-    vim.api.nvim_create_user_command("NotionMenu", function() telescope.openFutureEventsMenu() end, {})
+    vim.api.nvim_create_user_command("NotionMenu", function() require "notion.telescope".openFutureEventsMenu() end, {})
+    vim.api.nvim_create_user_command("NotionClear", function() clearData() end)
     prevStatus()
 
     if not initialized then return end
