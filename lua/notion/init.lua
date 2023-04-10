@@ -54,13 +54,14 @@ end
 M.setup = function(opts)
     initialiseFiles()
     M.opts = vim.tbl_deep_extend("force", defaults, opts or {})
+
     vim.api.nvim_create_user_command("NotionSetup", function() initialized = require("notion.setup").initialisation() end,
         {})
     vim.api.nvim_create_user_command("NotionUpdate", function() M.update() end, {})
-    vim.api.nvim_create_user_command("NotionMenu", function() require "notion.telescope".openFutureEventsMenu() end, {})
-    vim.api.nvim_create_user_command("NotionClear", function() clearData() end)
-    prevStatus()
+    vim.api.nvim_create_user_command("Notion", function() require "notion.telescope".openFutureEventsMenu() end, {})
+    vim.api.nvim_create_user_command("NotionClear", function() clearData() end, {})
 
+    prevStatus()
     if not initialized then return end
 
     if M.opts.autoUpdate then
