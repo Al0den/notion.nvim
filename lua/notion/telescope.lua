@@ -33,6 +33,33 @@ local function attach_mappings(prompt_bufnr, map)
     return true
 end
 
+
+
+--local function sort(data, dates)
+--    local sorted = {}
+--    for i, v in pairs(data) do
+--        if dates[v] == nil then
+--            table.insert(sorted, v)
+--            data[i] = nil
+--        end
+--    end
+--    local tmp = {}
+--
+--    for i, v in pairs(data) do
+--        if tmp == {} then
+--            tmp = { v }
+--        else
+--            for k, j in pairs(tmp) do
+--                vim.print(tmp)
+--                if dates[v] < dates[j] then
+--                    table.insert(tmp, v)
+--                end
+--            end
+--        end
+--    end
+--    return data
+--end
+
 M.openFutureEventsMenu = function(opts)
     opts = opts or {}
 
