@@ -45,11 +45,7 @@ M.update = function()
     if not initialized then
         return vim.print("[Notion] Not initialised, please run :NotionSetup")
     end
-    req.aReq(function(data) saveData(data) end)
-end
-
-local cycle = function()
-    vim.fn.timer_start(M.opts.updateDelay, function() M.update() end, { ["repeat"] = -1 })
+    req.request(function(data) saveData(data) end)
 end
 
 M.setup = function(opts)
@@ -59,9 +55,13 @@ M.setup = function(opts)
     vim.api.nvim_create_user_command("NotionUpdate", function() M.update() end, {})
     vim.api.nvim_create_user_command("NotionMenu", function() telescope.openFutureEventsMenu() end, {})
     prevStatus()
+
     if not initialized then return end
-    M.update()
-    if M.opts.autoUpdate then cycle() end
+
+    if M.opts.autoUpdate then
+        M.update()
+        vim.fn.timer_start(M.opts.updateDelay, function() M.update() end, { ["repeat"] = -1 })
+    end
 end
 
 return M

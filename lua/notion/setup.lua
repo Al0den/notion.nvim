@@ -39,7 +39,6 @@ local noKey = function()
     local newKey = vim.fn.input("Api key invalid/not set, insert new key:", "", "file")
     local storage = vim.fn.stdpath("data") .. "/notion-nvim/data.txt"
     local file = io.open(storage, "w")
-    vim.print(storage)
     if file == nil then
         print("problem")
     else

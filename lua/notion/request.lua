@@ -5,7 +5,7 @@ local parser = require "notion.parse"
 
 local M = {}
 
-M.aReq = function(callback)
+M.request = function(callback)
     local file = io.open(storage, "r")
     if file == nil then
         print(storage)
@@ -36,7 +36,7 @@ M.aReq = function(callback)
             if code == 0 then
                 callback(b._stdout_results[1])
             else
-                print("[Notion] Error calling API")
+                vim.print("[Notion] Error calling API")
             end
         end,
     })
@@ -50,7 +50,6 @@ M.deleteItem = function(selection)
 
     if raw == nil then return end
     local id = raw.ids[selection[1]]
-    vim.print(id)
 
     local file = io.open(storage, "r")
     if file == nil then
@@ -81,5 +80,7 @@ M.deleteItem = function(selection)
     })
 
     job:start()
+    return "[Notion] Deleting page..."
 end
+
 return M

@@ -6,18 +6,14 @@ M.earliest = function(opts)
     local biggestDate = ""
     local data
     for k, v in pairs(content) do
-        if v.properties.Dates ~= nil and v.properties.Dates.date ~= vim.NIL then
-            if v.properties.Dates.date.start ~= nil then
-                local str = v.properties.Dates.date.start
-                local ymd = string.sub(str, 1, 10)
-                local final = ymd:gsub("-", "")
+        if v.properties.Dates ~= nil and v.properties.Dates.date ~= vim.NIL and v.properties.Dates.date.start ~= nil then
+            local str = v.properties.Dates.date.start
+            local ymd = string.sub(str, 1, 10)
+            local final = ymd:gsub("-", "")
 
-                if final < biggestDate or data == nil then
-                    if final > vim.fn.strftime("%Y%m%d") then
-                        biggestDate = final
-                        data = v
-                    end
-                end
+            if (final < biggestDate or data == nil) and final > vim.fn.strftime("%Y%m%d") then
+                biggestDate = final
+                data = v
             end
         end
     end
@@ -26,17 +22,15 @@ end
 
 local function compareDates(v)
     if v == nil then return end
-    if v.properties.Dates ~= nil and v.properties.Dates.date ~= vim.NIL then
-        if v.properties.Dates.date.start ~= nil then
-            local str = v.properties.Dates.date.start
-            local ymd = string.sub(str, 1, 10)
-            local final = ymd:gsub("-", "")
+    if v.properties.Dates ~= nil and v.properties.Dates.date ~= vim.NIL and v.properties.Dates.date.start ~= nil then
+        local str = v.properties.Dates.date.start
+        local ymd = string.sub(str, 1, 10)
+        local final = ymd:gsub("-", "")
 
-            if final >= vim.fn.strftime("%Y%m%d") then
-                return final
-            end
-            return false
+        if final >= vim.fn.strftime("%Y%m%d") then
+            return final
         end
+        return false
     end
     return true
 end
@@ -49,16 +43,14 @@ M.eventList = function(opts)
     local ids = {}
     local dates = {}
     for _, v in pairs(content) do
-        if v.properties ~= nil and v.properties.Name ~= nil and v.properties.Name.title[1] ~= nil then
-            if compareDates(v) then
-                if compareDates(v) == true then
-                    dates[v.properties.Name.title[1].plain_text] = compareDates(v)
-                else
-                    table.insert(data, v.properties.Name.title[1].plain_text)
-                end
-                urls[v.properties.Name.title[1].plain_text] = v.url
-                ids[v.properties.Name.title[1].plain_text] = v.id
+        if v.properties ~= nil and v.properties.Name ~= nil and v.properties.Name.title[1] ~= nil and compareDates(v) then
+            if compareDates(v) == true then
+                dates[v.properties.Name.title[1].plain_text] = compareDates(v)
+            else
+                table.insert(data, v.properties.Name.title[1].plain_text)
             end
+            urls[v.properties.Name.title[1].plain_text] = v.url
+            ids[v.properties.Name.title[1].plain_text] = v.id
         end
     end
     return { data = data, urls = urls, ids = ids, dates = dates }
@@ -67,15 +59,16 @@ end
 M.eventPreview = function(name)
     local opts = require "notion".raw()
     local content = (vim.json.decode(opts)).results
+
     local final = {}
     local block = {}
+
     for i, v in pairs(content) do
-        if v.properties ~= nil and v.properties.Name ~= nil and v.properties.Name.title[1] ~= nil then
-            if v.properties.Name.title[1].plain_text == name then
-                block = v
-            end
+        if v.properties ~= nil and v.properties.Name ~= nil and v.properties.Name.title[1] ~= nil and v.properties.Name.title[1].plain_text == name then
+            block = v
         end
     end
+
     if block == {} then return { "No data" } end
     if block.properties.Dates ~= nil and block.properties.Dates.date ~= nil then
         table.insert(final, "Date: " .. block.properties.Dates.date.start)
