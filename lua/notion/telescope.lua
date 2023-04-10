@@ -33,7 +33,7 @@ local function attach_mappings(prompt_bufnr, map)
     return true
 end
 
-M.openMenu = function(opts)
+M.openFutureEventsMenu = function(opts)
     opts = opts or {}
 
     local initData = require "notion".raw()

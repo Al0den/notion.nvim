@@ -80,7 +80,7 @@ require"notion.components".nextEventName()
 require"notion.components".nextEventDate()
 
 --Display all future events menu
-require"notion".openMenu()
+require"notion".openFutureEventsMenu()
 ```
 
 ## Roadmap
