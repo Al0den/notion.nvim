@@ -47,7 +47,7 @@ require'lualine'.setup {
     ...
 }
 ```
-## How to use
+## Defaults
 
 The default configuration is:
 
