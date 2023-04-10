@@ -6,10 +6,13 @@
 
 Any plugin manager should do the trick. Calling the setup function is required if you want to access the plugin
 
+Note: Telescope (And as such, plenary.nvim) are required respectively to open the menu and make API calls
+
 [**packer.nvim**](https://github.com/wbthomason/packer.nvim)
 ```lua
 use {
     "Al0den/notion.nvim",
+    requires = { 'nvim-telescope/telescope.nvim'},
     config = function()
         require"notion".setup()
     end
@@ -28,6 +31,8 @@ END
 ## How to use
 
 By default, the plugin simply wont do anything. Call the `:NotionSetup` function to initialise the plugin and enable it's features. 
+
+The simplest of use is the `NotionMenu` (`require"notion".openMenu()`), which opens a menu will all upcomings events. However, a lot of functions are exposed through the `notions.components` file.
 
 As an example, to insert the next event inside your lualine something, you could do something such as:
 
@@ -82,4 +87,5 @@ require"notion".openMenu()
 
 - Extend available functions list
 - Create menu with all future events - Already available, but will be improved
+- Add menu sorter
 - Add events/reminder creation feature

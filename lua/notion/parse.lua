@@ -33,11 +33,12 @@ local function compareDates(v)
             local final = ymd:gsub("-", "")
 
             if final >= vim.fn.strftime("%Y%m%d") then
-                return true
+                return final
             end
             return false
         end
     end
+    return true
 end
 
 M.eventList = function(opts)
@@ -45,15 +46,60 @@ M.eventList = function(opts)
     local content = vim.json.decode(opts).results
     local data = {}
     local urls = {}
+    local ids = {}
+    local dates = {}
     for _, v in pairs(content) do
         if v.properties ~= nil and v.properties.Name ~= nil and v.properties.Name.title[1] ~= nil then
             if compareDates(v) then
-                table.insert(data, v.properties.Name.title[1].plain_text)
+                if compareDates(v) == true then
+                    dates[v.properties.Name.title[1].plain_text] = compareDates(v)
+                else
+                    table.insert(data, v.properties.Name.title[1].plain_text)
+                end
                 urls[v.properties.Name.title[1].plain_text] = v.url
+                ids[v.properties.Name.title[1].plain_text] = v.id
             end
         end
     end
-    return { data = data, urls = urls }
+    return { data = data, urls = urls, ids = ids, dates = dates }
+end
+
+M.eventPreview = function(name)
+    local opts = require "notion".raw()
+    local content = (vim.json.decode(opts)).results
+    local final = {}
+    local block = {}
+    for i, v in pairs(content) do
+        if v.properties ~= nil and v.properties.Name ~= nil and v.properties.Name.title[1] ~= nil then
+            if v.properties.Name.title[1].plain_text == name then
+                block = v
+            end
+        end
+    end
+    if block == {} then return { "No data" } end
+    if block.properties.Dates ~= nil and block.properties.Dates.date ~= nil then
+        table.insert(final, "Date: " .. block.properties.Dates.date.start)
+        table.insert(final, " ")
+    end
+    if block.properties.Type ~= nil then
+        table.insert(final, "Type: " .. block.properties.Type.select.name)
+        table.insert(final, " ")
+    end
+    if block.properties.Topic ~= nil then
+        local l = "Topics: "
+        local count = true
+        for i, v in pairs(block.properties.Topic.multi_select) do
+            if count == true then
+                l = l .. v.name
+                count = false
+            else
+                l = l .. ", " .. v.name
+            end
+        end
+        table.insert(final, l)
+        table.insert(final, " ")
+    end
+    return final
 end
 
 return M

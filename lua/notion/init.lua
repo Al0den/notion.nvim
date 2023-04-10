@@ -57,19 +57,11 @@ M.setup = function(opts)
     vim.api.nvim_create_user_command("NotionSetup", function() initialized = require("notion.setup").initialisation() end,
         {})
     vim.api.nvim_create_user_command("NotionUpdate", function() M.update() end, {})
+    vim.api.nvim_create_user_command("NotionMenu", function() telescope.openMenu() end, {})
     prevStatus()
     if not initialized then return end
     M.update()
     if M.opts.autoUpdate then cycle() end
 end
-
-M.taste = function()
-    vim.print(vim.json.decode(parser.parse(latest)))
-end
-
-M.openMenu = function()
-    telescope.openMenu()
-end
-
 
 return M
