@@ -34,6 +34,11 @@ By default, the plugin simply wont do anything. Call the `:NotionSetup` function
 
 The simplest of use is the `NotionMenu` (`require"notion".openMenu()`), which opens a menu will all upcomings events. However, a lot of functions are exposed through the `notions.components` file.
 
+```lua
+-- keymaps.lua
+vim.keymaps.set("n", "<leader>no", function () require"notion".openMenu() end)
+```
+
 As an example, to insert the next event inside your lualine something, you could do something such as:
 
 ```lua
@@ -59,7 +64,8 @@ The default configuration is:
 ```lua
 require"notion".setup {
     autoUpdate = true,
-    updateDelay = 60000
+    updateDelay = 60000,
+    open = "notion"
 }
 ```
 
@@ -87,5 +93,6 @@ require"notion".openFutureEventsMenu()
 
 - Extend available functions list
 - Create menu with all future events - Already available, but will be improved
+- Add reminder notifications
 - Add menu sorter
 - Add events/reminder creation feature
