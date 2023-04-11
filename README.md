@@ -32,7 +32,7 @@ END
 
 By default, the plugin simply wont do anything. Call the `:NotionSetup` function to initialise the plugin and enable it's features. 
 
-The simplest of use is the `NotionMenu` (`require"notion".openMenu()`), which opens a menu will all upcomings events. However, a lot of functions are exposed through the `notions.components` file.
+The simplest of use is the `Notion` (`require"notion".openMenu()`), which opens a menu will all upcomings events. However, a lot of functions are exposed through the `notions.components` file.
 
 ```lua
 -- keymaps.lua
