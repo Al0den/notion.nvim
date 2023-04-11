@@ -30,6 +30,10 @@ local saveData = function(data)
     file:close()
 end
 
+M.saveData = function(data)
+    saveData(data)
+end
+
 M.raw = function()
     local path = vim.fn.stdpath("data") .. "/notion/saved.txt"
     local file = io.open(path, "r")
@@ -61,6 +65,8 @@ end
 
 local function clearData()
     os.execute("rm -rf -d -R " .. vim.fn.stdpath("data") .. "/notion/")
+    initialized = false
+    initialiseFiles()
     vim.print("[Notion] Cleared all saved data")
 end
 

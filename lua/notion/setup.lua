@@ -29,8 +29,9 @@ local tryKey = function()
         url = "https://api.notion.com/v1/search",
         headers = headers
     })
-    if res.status == 401 then return true end
 
+    if res.status == 401 then return true end
+    require "notion".saveData(res.body)
     vim.print("[Notion] Status: Operational")
     status = true
     saveStatus()
@@ -45,7 +46,9 @@ local noKey = function()
     else
         file:write(newKey)
         file:close()
-        vim.print("[Notion] To setup, run command :NotionSetup")
+        if tryKey() then
+            return vim.print("[Notion] Invalid key, please try again")
+        end
     end
 end
 
