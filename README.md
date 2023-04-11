@@ -92,7 +92,5 @@ require"notion".openFutureEventsMenu()
 ## Roadmap
 
 - Extend available functions list
-- Create menu with all future events - Already available, but will be improved
 - Add reminder notifications
-- Add menu sorter
 - Add events/reminder creation feature
