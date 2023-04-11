@@ -15,6 +15,11 @@ local deleteItem = function(prompt_bufnr)
     require "notion".update()
 end
 
+local editItem = function(prompt_bufnr)
+    local selection = action_state.get_selected_entry()
+    vim.print("WIP")
+end
+
 local function attach_mappings(prompt_bufnr, map)
     actions.select_default:replace(function()
         local initData = require "notion".raw()
@@ -26,9 +31,14 @@ local function attach_mappings(prompt_bufnr, map)
 
         actions.close(prompt_bufnr)
         local selection = action_state.get_selected_entry()
-        os.execute("open " .. urls[selection[1]])
+        if require "notion".opts.open == "notion" then
+            os.execute("open notion://" .. "www." .. urls[selection[1]]:sub(9))
+        else
+            os.execute("open " .. urls[selection[1]])
+        end
     end)
     map("n", "d", deleteItem)
+    map("n", "e", editItem)
 
     return true
 end
