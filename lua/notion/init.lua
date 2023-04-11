@@ -12,7 +12,7 @@ local function checkInit()
 end
 
 local prevStatus = function()
-    local path = vim.fn.stdpath("data") .. "/notion-nvim/prev.txt"
+    local path = vim.fn.stdpath("data") .. "/notion/prev.txt"
     local file = io.open(path, "r")
     if file == nil then return false end
     local l = file:read("*a")
@@ -25,7 +25,7 @@ end
 local saveData = function(data)
     local path = vim.fn.stdpath("data") .. "/notion/saved.txt"
     local file = io.open(path, "w")
-    if file == nil then return end
+    if file == nil then return vim.print("[Notion] Incorrect Setup") end
     file:write(data)
     file:close()
 end
@@ -45,7 +45,7 @@ M.update = function()
     end
     req.request(function(data) saveData(data) end)
 
-    local path = vim.fn.stdpath("data") .. "/notion-nvim/prev.txt"
+    local path = vim.fn.stdpath("data") .. "/notion/prev.txt"
     local file = io.open(path, "w")
     if file == nil then return false end
     file:write("true")

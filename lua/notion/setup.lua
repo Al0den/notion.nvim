@@ -4,7 +4,7 @@ local status = false
 local curl = require "plenary.curl"
 
 local saveStatus = function()
-    local path = vim.fn.stdpath("data") .. "/notion-nvim/prev.txt"
+    local path = vim.fn.stdpath("data") .. "/notion/prev.txt"
     local file = io.open(path, "w")
     if file == nil then return false end
 
@@ -13,7 +13,7 @@ end
 
 local tryKey = function()
     local headers = {}
-    local storageFile = vim.fn.stdpath("data") .. "/notion-nvim/data.txt"
+    local storageFile = vim.fn.stdpath("data") .. "/notion/data.txt"
     local file = io.open(storageFile, "r")
 
     if file == nil then return true end
@@ -38,7 +38,7 @@ end
 
 local noKey = function()
     local newKey = vim.fn.input("Api key invalid/not set, insert new key:", "", "file")
-    local storage = vim.fn.stdpath("data") .. "/notion-nvim/data.txt"
+    local storage = vim.fn.stdpath("data") .. "/notion/data.txt"
     local file = io.open(storage, "w")
     if file == nil then
         return vim.print("[Notion] Incorrect Configuration")
@@ -50,7 +50,7 @@ local noKey = function()
 end
 
 local notionSetup = function()
-    local storage = vim.fn.stdpath("data") .. "/notion-nvim/data.txt"
+    local storage = vim.fn.stdpath("data") .. "/notion/data.txt"
 
     local file = io.open(storage, "r")
     local l = {}

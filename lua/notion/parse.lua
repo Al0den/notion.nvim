@@ -65,7 +65,7 @@ M.eventPreview = function(name)
     local final = {}
     local block = {}
 
-    for i, v in pairs(content) do
+    for _, v in pairs(content) do
         if v.properties ~= nil and v.properties.Name ~= nil and v.properties.Name.title[1] ~= nil and v.properties.Name.title[1].plain_text == name then
             block = v
         end
@@ -76,14 +76,14 @@ M.eventPreview = function(name)
         table.insert(final, "Date: " .. block.properties.Dates.date.start)
         table.insert(final, " ")
     end
-    if block.properties.Type ~= nil then
+    if block.properties.Type ~= nil and block.properties.select ~= nil then
         table.insert(final, "Type: " .. block.properties.Type.select.name)
         table.insert(final, " ")
     end
     if block.properties.Topic ~= nil then
         local l = "Topics: "
         local count = true
-        for i, v in pairs(block.properties.Topic.multi_select) do
+        for _, v in pairs(block.properties.Topic.multi_select) do
             if count == true then
                 l = l .. v.name
                 count = false

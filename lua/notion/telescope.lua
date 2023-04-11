@@ -11,8 +11,10 @@ local M = {}
 
 local deleteItem = function(prompt_bufnr)
     local selection = action_state.get_selected_entry()
+    actions.close(prompt_bufnr)
     request.deleteItem(selection)
     require "notion".update()
+    return "[Notion] Deleting..."
 end
 
 local editItem = function(prompt_bufnr)
@@ -75,7 +77,7 @@ M.openFutureEventsMenu = function(opts)
         sorter = conf.generic_sorter(opts),
         attach_mappings = attach_mappings,
         previewer = previewers.new_buffer_previewer {
-            title = "Preview",
+            title = "Information",
             define_preview = function(self, entry, status)
                 vim.api.nvim_buf_set_lines(self.state.bufnr, 0, -1, false, parser.eventPreview(entry[1]))
             end

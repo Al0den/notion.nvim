@@ -1,4 +1,4 @@
-local storage = vim.fn.stdpath("data") .. "/notion-nvim/data.txt"
+local storage = vim.fn.stdpath("data") .. "/notion/data.txt"
 local Job = require('plenary.job')
 
 local parser = require "notion.parse"
@@ -74,7 +74,6 @@ M.deleteItem = function(selection)
     })
 
     job:start()
-    return "[Notion] Deleting page..."
 end
 
 return M
