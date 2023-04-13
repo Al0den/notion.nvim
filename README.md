@@ -70,7 +70,8 @@ require"notion".setup {
         deleteKey = "d",
         editKey = "e",
         openNotion = "o"
-    }
+    },
+    notifications = false -- Would recommend using that, spits out errors right now
 }
 ```
 
