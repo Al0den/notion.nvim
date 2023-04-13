@@ -67,6 +67,8 @@ end
 M.openFutureEventsMenu = function(opts)
     opts = opts or {}
 
+    if not notion.checkInit() then return end
+
     local initData = notion.raw()
     local raw = parser.eventList(initData)
     if raw == nil then return end

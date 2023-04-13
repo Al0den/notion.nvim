@@ -5,10 +5,13 @@ local initialized = false
 local defaults = require "notion.defaults"
 local req = require "notion.request"
 
-local function checkInit()
+--Access init status from other files
+M.checkInit = function()
     if not initialized then
-        return vim.print("[Notion] Not initialised, please run :NotionSetup")
+        vim.print("[Notion] Not initialised, please run :NotionSetup")
+        return false
     end
+    return true
 end
 
 --Save status for next neovim log in
@@ -25,6 +28,7 @@ end
 
 --Returns the raw output of the api, as a string
 M.raw = function()
+    if not M.checkInit() then return end
     local path = vim.fn.stdpath("data") .. "/notion/saved.txt"
     local file = io.open(path, "r")
     if file == nil then return end
@@ -38,9 +42,7 @@ M.update = function(opts)
     opts.silent = opts.silent or false
     opts.window = opts.window or nil
 
-    if not initialized then
-        return vim.print("[Notion] Not initialised, please run :NotionSetup")
-    end
+    if not M.checkInit() then return end
 
     local window = nil
 
@@ -80,6 +82,8 @@ end
 
 --Self explanatory
 local function clearData()
+    if not M.checkInit() then return end
+
     os.execute("rm -rf -d -R " .. vim.fn.stdpath("data") .. "/notion/")
     initialized = false
     initialiseFiles()
