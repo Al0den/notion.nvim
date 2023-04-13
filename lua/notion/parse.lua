@@ -1,15 +1,25 @@
 local M = {}
 
+
+M.getDate = function(v)
+    if v.properties.Dates ~= nil and v.properties.Dates.date ~= vim.NIL and v.properties.Dates.date.start ~= nil then
+        local str = v.properties.Dates.date.start
+
+        --local date = ((((str:gsub("-", "")):gsub("T", "")):gsub(":", "")):gsub(".", "")):gsub("+", "")
+        local date = str:gsub("-", ""):gsub("T", ""):gsub(":", ""):gsub("+", "")
+        return date
+    end
+    return "No Date"
+end
+
 M.earliest = function(opts)
     if opts == " " or opts == nil then return nil end
     local content = (vim.json.decode(opts)).results
-    local biggestDate = ""
+    local biggestDate = "No earliest event"
     local data
     for k, v in pairs(content) do
         if v.properties.Dates ~= nil and v.properties.Dates.date ~= vim.NIL and v.properties.Dates.date.start ~= nil then
-            local str = v.properties.Dates.date.start
-            local ymd = string.sub(str, 1, 10)
-            local final = ymd:gsub("-", "")
+            local final = M.getDate(v)
 
             if (final < biggestDate or data == nil) and final > vim.fn.strftime("%Y%m%d") then
                 biggestDate = final
@@ -24,6 +34,7 @@ local function compareDates(v)
     if v == nil then return end
     if v.properties.Dates ~= nil and v.properties.Dates.date ~= vim.NIL and v.properties.Dates.date.start ~= nil then
         local str = v.properties.Dates.date.start
+        vim.print(str)
         local ymd = string.sub(str, 1, 10)
         local final = ymd:gsub("-", "")
 
@@ -52,7 +63,6 @@ M.eventList = function(opts)
     local urls = {}
     local ids = {}
     local dates = {}
-    local sorter = {}
     for _, v in pairs(content) do
         if v.properties ~= nil and v.properties.Name ~= nil and v.properties.Name.title[1] ~= nil and compareDates(v) then
             if compareDates(v) == true then
@@ -85,9 +95,11 @@ M.eventPreview = function(name)
     if block.properties.Dates ~= nil and block.properties.Dates.date ~= nil then
         table.insert(final, "Date: " .. block.properties.Dates.date.start)
         table.insert(final, " ")
+        vim.print(M.getDate(block))
     end
-    if block.properties.Type ~= nil and block.properties.Type.select ~= nil then
-        table.insert(final, "Type: " .. block.properties.Type.select.name)
+    if block.properties.Type ~= nil and block.properties.Type.select ~= nil and block.properties.Type.select.name ~= nil then
+        local toAdd = block.properties.Type.select.name or "None"
+        table.insert(final, "Type: " .. toAdd)
         table.insert(final, " ")
     end
     if block.properties.Topic ~= nil then
