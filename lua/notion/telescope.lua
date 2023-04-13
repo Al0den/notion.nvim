@@ -7,14 +7,24 @@ local previewers = require "telescope.previewers"
 
 local parser = require "notion.parse"
 local request = require "notion.request"
+local notion = require "notion"
+
 local M = {}
 
 local deleteItem = function(prompt_bufnr)
     local selection = action_state.get_selected_entry()
     actions.close(prompt_bufnr)
     request.deleteItem(selection)
-    require "notion".update()
+    notion.update()
     return "[Notion] Deleting..."
+end
+
+local addItem = function(prompt_bufnr)
+    local selection = action_state.get_selected_entry()
+    actions.close(prompt_bufnr)
+    local databaseID = selection[1].parent.database_id
+    local title = vim.fn.input("Title: ")
+    request.addItem({ databaseID = databaseID, title = title })
 end
 
 local editItem = function(prompt_bufnr)
@@ -24,7 +34,7 @@ end
 
 local function attach_mappings(prompt_bufnr, map)
     actions.select_default:replace(function()
-        local initData = require "notion".raw()
+        local initData = notion.raw()
         local raw = parser.eventList(initData)
 
         if raw == nil then return end
@@ -33,14 +43,13 @@ local function attach_mappings(prompt_bufnr, map)
 
         actions.close(prompt_bufnr)
         local selection = action_state.get_selected_entry()
-        if require "notion".opts.open == "notion" then
+        if notion.opts.open == "notion" then
             os.execute("open notion://" .. "www." .. urls[selection[1]]:sub(9))
         else
             os.execute("open " .. urls[selection[1]])
         end
     end)
-    map("n", "d", deleteItem)
-    map("n", "e", editItem)
+    map("n", notion.opts.keys.deleteKey, deleteItem)
 
     return true
 end
@@ -48,7 +57,7 @@ end
 M.openFutureEventsMenu = function(opts)
     opts = opts or {}
 
-    local initData = require "notion".raw()
+    local initData = notion.raw()
     local raw = parser.eventList(initData)
     if raw == nil then return end
 

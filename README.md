@@ -65,7 +65,10 @@ The default configuration is:
 require"notion".setup {
     autoUpdate = true,
     updateDelay = 60000,
-    open = "notion"
+    open = "notion",
+    keys = {
+        deleteKey = "d"
+    }
 }
 ```
 

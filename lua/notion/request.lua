@@ -41,6 +41,43 @@ M.request = function(callback)
     job:start()
 end
 
+M.resolveDatabase = function(id, callback)
+    local file = io.open(storage, "r")
+    if file == nil then return end
+    local l = file:read("*a")
+
+    local job = Job:new({
+        command = 'curl',
+        args = {
+            '-H', 'Authorization: Bearer ' .. l,
+            '-H', 'Notion-Version: 2022-06-28',
+            'https://api.notion.com/v1/databases/' .. id
+        },
+        enabled_recording = true,
+        on_exit = function(b, code)
+            if code == 0 then
+                callback(b._stdout_results[1])
+            else
+                vim.print("[Notion] Error calling API")
+            end
+        end,
+    })
+
+    job:start()
+end
+
+local addItemDefaults = {
+    title = "No title",
+    date = vim.fn.strftime("%Y-%m-%d"),
+    topics = "",
+    type = ""
+}
+
+M.addItem = function(opts)
+    opts = vim.tbl_deep_extend("force", addItemDefaults, opts or {})
+    return vim.print("WIP")
+end
+
 M.deleteItem = function(selection)
     local initData = require "notion".raw()
     local raw = parser.eventList(initData)

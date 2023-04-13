@@ -35,6 +35,16 @@ local function compareDates(v)
     return true
 end
 
+M.objectFromName = function(name)
+    local raw = vim.json.decode(require "notion".raw()).results
+    for i, v in pairs(raw) do
+        if v.properties ~= nil and v.properties.Name ~= nil and v.properties.Name.title[1] ~= nil and v.properties.Name.title[1].plain_text == name then
+            return v
+        end
+    end
+    return "Problem"
+end
+
 M.eventList = function(opts)
     if opts == " " or opts == nil then return nil end
     local content = vim.json.decode(opts).results
@@ -76,7 +86,7 @@ M.eventPreview = function(name)
         table.insert(final, "Date: " .. block.properties.Dates.date.start)
         table.insert(final, " ")
     end
-    if block.properties.Type ~= nil and block.properties.select ~= nil then
+    if block.properties.Type ~= nil and block.properties.Type.select ~= nil then
         table.insert(final, "Type: " .. block.properties.Type.select.name)
         table.insert(final, " ")
     end
@@ -95,6 +105,10 @@ M.eventPreview = function(name)
         table.insert(final, " ")
     end
     return final
+end
+
+M.databaseName = function(object)
+    return object.icon.emoji .. " " .. object.title.text.content
 end
 
 return M
