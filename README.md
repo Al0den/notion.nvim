@@ -84,11 +84,15 @@ Available lua functions are, as of right now:
 --Get raw output from the api, as a string
 require"notion".raw()
 
+--Get formatted earliest event
+require"notion.components".nextEvent()
+
 --Get next event name
 require"notion.components".nextEventName()
 
 --Get next event date
-require"notion.components".nextEventDate()
+require"notion.components".nextEventDate() --In its full format
+require"notion.components".nextEventShortDate() --Matches by day to adapt displaystyle, used in `nextEvent()`
 
 --Display all future events menu
 require"notion".openFutureEventsMenu()

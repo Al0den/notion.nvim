@@ -1,4 +1,5 @@
 local M = {}
+local utils = require "notion-utils"
 
 M.getDate = function(v)
     if v.properties.Dates ~= nil and v.properties.Dates.date ~= vim.NIL and v.properties.Dates.date.start ~= nil then
@@ -13,16 +14,8 @@ end
 M.displayDate = function(v)
     if v.properties.Dates ~= nil and v.properties.Dates.date ~= vim.NIL and v.properties.Dates.date.start ~= nil then
         local inputDate = v.properties.Dates.date.start
-        local function parseISO8601Date(isoDate)
-            local year, month, day, hour, minute, second, timezone = isoDate:match(
-                "(%d+)-(%d+)-(%d+)T?(%d*):?(%d*):?(%d*).?([%+%-]?)(%d*:?%d*)")
-            return tonumber(year), tonumber(month), tonumber(day), tonumber(hour), tonumber(minute), tonumber(second),
-                timezone,
-                timezone and
-                (tonumber(timezone) or timezone)
-        end
 
-        local year, month, day, hour, minute, second, timezone, timezoneValue = parseISO8601Date(inputDate)
+        local year, month, day, hour, minute, second, timezone, timezoneValue = utils.parseISO8601Date(inputDate)
 
         local humanReadableDate
 
@@ -40,6 +33,25 @@ M.displayDate = function(v)
         return humanReadableDate
     end
     return "No Date"
+end
+
+M.displayShortDate = function(v)
+    if v.properties.Dates ~= nil and v.properties.Dates.date ~= vim.NIL and v.properties.Dates.date.start ~= nil then
+        local inputDate = v.properties.Dates.date.start
+        local year, month, day, hour, minute, second, timezone, timezoneValue = utils.parseISO8601Date(inputDate)
+
+        local currentDateTime = os.date("*t")
+        local currentYear = currentDateTime.year
+        local currentMonth = currentDateTime.month
+        local currentDay = currentDateTime.day
+
+        if year == currentYear and month == currentMonth and day == currentDay then
+            local formattedTime = string.format("%02d:%02d", hour, minute)
+            return formattedTime
+        else
+            return M.displayDate(v)
+        end
+    end
 end
 
 M.earliest = function(opts)

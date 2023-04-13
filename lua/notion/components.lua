@@ -3,7 +3,7 @@ local M = {}
 local parser = require "notion.parse"
 
 local function getEarliestData()
-    local initData = require("notion.init")
+    local initData = require("notion")
     local data = parser.earliest(initData.raw())
     return data
 end
@@ -18,18 +18,21 @@ end
 M.nextEventDate = function()
     local data = getEarliestData()
     if data == nil then return " " end
-    if data.properties.Date == nil or data.properties.Date.date == nil or data.properites.Date.date.start == nil then
-        return
-        " "
-    end
-    return data.properties.Date.date.start
+    return parser.displayDate(data)
+end
+
+
+M.nextEventShortDate = function()
+    local data = getEarliestData()
+    if data == nil then return " " end
+    return parser.displayShortDate(data)
 end
 
 M.nextEvent = function()
     if M.nextEventDate() == " " then
         return M.nextEventName()
     else
-        return M.nextEventName() .. " - " .. M.nextEventDate()
+        return M.nextEventName() .. " - " .. M.nextEventShortDate()
     end
 end
 
