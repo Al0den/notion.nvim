@@ -67,7 +67,9 @@ require"notion".setup {
     updateDelay = 60000,
     open = "notion",
     keys = {
-        deleteKey = "d"
+        deleteKey = "d",
+        editKey = "e",
+        openNotion = "o"
     }
 }
 ```
