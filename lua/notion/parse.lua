@@ -2,55 +2,59 @@ local M = {}
 local utils = require "notion-utils"
 
 M.getDate = function(v)
-    if v.properties.Dates ~= nil and v.properties.Dates.date ~= vim.NIL and v.properties.Dates.date.start ~= nil then
-        local str = v.properties.Dates.date.start
-
-        local date = str:gsub("-", ""):gsub("T", ""):gsub(":", ""):gsub("+", "")
-        return date
+    if v.properties.Dates == nil and v.properties.Dates.date == vim.NIL and v.properties.Dates.date.start == nil then
+        return
+        "No Date"
     end
-    return "No Date"
+
+    local str = v.properties.Dates.date.start
+
+    local date = str:gsub("-", ""):gsub("T", ""):gsub(":", ""):gsub("+", "")
+    return date
 end
 
 M.displayDate = function(v)
-    if v.properties.Dates ~= nil and v.properties.Dates.date ~= vim.NIL and v.properties.Dates.date.start ~= nil then
-        local inputDate = v.properties.Dates.date.start
-
-        local year, month, day, hour, minute, second, timezone, timezoneValue = utils.parseISO8601Date(inputDate)
-
-        local humanReadableDate
-
-        if hour and minute and second then
-            local timezoneSign = (timezone == "+") and "+" or "-"
-            local timezoneHoursDiff = tonumber(timezoneValue) or 0
-            humanReadableDate = string.format("%s %d, %d at %02d:%02d %s%02d:%02d",
-                os.date("%B", os.time({ year = year, month = month, day = day })), day, year, hour, minute, timezoneSign,
-                timezoneHoursDiff, 0)
-        else
-            humanReadableDate = string.format("%s %d, %d",
-                os.date("%B", os.time({ year = year, month = month, day = day })),
-                day, year)
-        end
-        return humanReadableDate
+    if v.properties.Dates == nil and v.properties.Dates.date == vim.NIL and v.properties.Dates.date.start == nil then
+        return
+        "No date"
     end
-    return "No Date"
+
+    local inputDate = v.properties.Dates.date.start
+    local year, month, day, hour, minute, second, timezone, timezoneValue = utils.parseISO8601Date(inputDate)
+    local humanReadableDate
+
+    if hour and minute and second then
+        local timezoneSign = (timezone == "+") and "+" or "-"
+        local timezoneHoursDiff = tonumber(timezoneValue) or 0
+        humanReadableDate = string.format("%s %d, %d at %02d:%02d %s%02d:%02d",
+            os.date("%B", os.time({ year = year, month = month, day = day })), day, year, hour, minute, timezoneSign,
+            timezoneHoursDiff, 0)
+    else
+        humanReadableDate = string.format("%s %d, %d",
+            os.date("%B", os.time({ year = year, month = month, day = day })),
+            day, year)
+    end
+    return humanReadableDate
 end
 
 M.displayShortDate = function(v)
-    if v.properties.Dates ~= nil and v.properties.Dates.date ~= vim.NIL and v.properties.Dates.date.start ~= nil then
-        local inputDate = v.properties.Dates.date.start
-        local year, month, day, hour, minute, second, timezone, timezoneValue = utils.parseISO8601Date(inputDate)
+    if v.properties.Dates == nil and v.properties.Dates.date == vim.NIL and v.properties.Dates.date.start == nil then
+        return "No date"
+    end
 
-        local currentDateTime = os.date("*t")
-        local currentYear = currentDateTime.year
-        local currentMonth = currentDateTime.month
-        local currentDay = currentDateTime.day
+    local inputDate = v.properties.Dates.date.start
+    local year, month, day, hour, minute, second, timezone, timezoneValue = utils.parseISO8601Date(inputDate)
+    local currentDateTime = os.date("*t")
 
-        if year == currentYear and month == currentMonth and day == currentDay then
-            local formattedTime = string.format("%02d:%02d", hour, minute)
-            return formattedTime
-        else
-            return M.displayDate(v)
-        end
+    local currentYear = currentDateTime.year
+    local currentMonth = currentDateTime.month
+    local currentDay = currentDateTime.day
+
+    if year == currentYear and month == currentMonth and day == currentDay then
+        local formattedTime = string.format("%02d:%02d", hour, minute)
+        return formattedTime
+    else
+        return M.displayDate(v)
     end
 end
 
@@ -74,17 +78,16 @@ end
 
 local function compareDates(v)
     if v == nil then return end
-    if v.properties.Dates ~= nil and v.properties.Dates.date ~= vim.NIL and v.properties.Dates.date.start ~= nil then
-        local str = v.properties.Dates.date.start
-        local ymd = string.sub(str, 1, 10)
-        local final = ymd:gsub("-", "")
+    if v.properties.Dates == nil and v.properties.Dates.date == vim.NIL and v.properties.Dates.date.start == nil then return true end
 
-        if final >= vim.fn.strftime("%Y%m%d") then
-            return final
-        end
-        return false
+    local str = v.properties.Dates.date.start
+    local ymd = string.sub(str, 1, 10)
+    local final = ymd:gsub("-", "")
+
+    if final >= vim.fn.strftime("%Y%m%d") then
+        return final
     end
-    return true
+    return false
 end
 
 M.objectFromName = function(name)
