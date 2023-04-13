@@ -1,5 +1,6 @@
 local M = {}
 
+--Parse ISO8601 date (Function reused and heavy, relocated to this file)
 M.parseISO8601Date = function(isoDate)
     local year, month, day, hour, minute, second, timezone = isoDate:match(
         "(%d+)-(%d+)-(%d+)T?(%d*):?(%d*):?(%d*).?([%+%-]?)(%d*:?%d*)")
