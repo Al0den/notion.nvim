@@ -53,6 +53,7 @@ M.update = function()
     local file = io.open(path, "w")
     if file == nil then return false end
     file:write("true")
+    file:close()
 end
 
 local function initialiseFiles()

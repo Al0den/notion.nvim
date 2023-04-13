@@ -97,3 +97,5 @@ require"notion".openFutureEventsMenu()
 - Extend available functions list
 - Add reminder notifications
 - Add events/reminder creation feature
+- Improve deleting as to force deleting in saved data rather than force update (Not in the near future)
+- Add creation/modification capabilities (Useless?)
