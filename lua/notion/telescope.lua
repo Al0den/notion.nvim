@@ -19,28 +19,29 @@ local deleteItem = function(prompt_bufnr)
     vim.notify("[Notion] Deleting...")
 end
 
-local addItem = function(prompt_bufnr)
-    local selection = action_state.get_selected_entry()
-    actions.close(prompt_bufnr)
-    local databaseID = selection[1].parent.database_id
-    local title = vim.fn.input("Title: ")
-    request.addItem({ databaseID = databaseID, title = title })
+local editItem = function(prompt_bufnr)
+    local initData = notion.raw()
+    local raw = parser.eventList(initData)
+
+    if raw == nil then return end
+
+    local urls = raw.urls
+
+    os.execute("open notion://" .. "www." .. urls[action_state.get_selected_entry()[1]]:sub(9))
 end
 
-local editItem = function(prompt_bufnr)
-    local selection = action_state.get_selected_entry()
-    vim.print("WIP")
+local openNotion = function(prompt_bufnr)
+    os.execute("open notion://www.notion.so")
 end
 
 local function attach_mappings(prompt_bufnr, map)
+    local initData = notion.raw()
+    local raw = parser.eventList(initData)
+
+    if raw == nil then return end
+
+    local urls = raw.urls
     actions.select_default:replace(function()
-        local initData = notion.raw()
-        local raw = parser.eventList(initData)
-
-        if raw == nil then return end
-
-        local urls = raw.urls
-
         actions.close(prompt_bufnr)
         local selection = action_state.get_selected_entry()
         if notion.opts.open == "notion" then
@@ -50,6 +51,8 @@ local function attach_mappings(prompt_bufnr, map)
         end
     end)
     map("n", notion.opts.keys.deleteKey, deleteItem)
+    map("n", notion.opts.keys.editKey, editItem)
+    map("n", notion.opts.keys.openNotion, openNotion)
 
     return true
 end
