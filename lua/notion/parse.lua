@@ -1,13 +1,43 @@
 local M = {}
 
-
 M.getDate = function(v)
     if v.properties.Dates ~= nil and v.properties.Dates.date ~= vim.NIL and v.properties.Dates.date.start ~= nil then
         local str = v.properties.Dates.date.start
 
-        --local date = ((((str:gsub("-", "")):gsub("T", "")):gsub(":", "")):gsub(".", "")):gsub("+", "")
         local date = str:gsub("-", ""):gsub("T", ""):gsub(":", ""):gsub("+", "")
         return date
+    end
+    return "No Date"
+end
+
+M.displayDate = function(v)
+    if v.properties.Dates ~= nil and v.properties.Dates.date ~= vim.NIL and v.properties.Dates.date.start ~= nil then
+        local inputDate = v.properties.Dates.date.start
+        local function parseISO8601Date(isoDate)
+            local year, month, day, hour, minute, second, timezone = isoDate:match(
+                "(%d+)-(%d+)-(%d+)T?(%d*):?(%d*):?(%d*).?([%+%-]?)(%d*:?%d*)")
+            return tonumber(year), tonumber(month), tonumber(day), tonumber(hour), tonumber(minute), tonumber(second),
+                timezone,
+                timezone and
+                (tonumber(timezone) or timezone)
+        end
+
+        local year, month, day, hour, minute, second, timezone, timezoneValue = parseISO8601Date(inputDate)
+
+        local humanReadableDate
+
+        if hour and minute and second then
+            local timezoneSign = (timezone == "+") and "+" or "-"
+            local timezoneHoursDiff = tonumber(timezoneValue) or 0
+            humanReadableDate = string.format("%s %d, %d at %02d:%02d %s%02d:%02d",
+                os.date("%B", os.time({ year = year, month = month, day = day })), day, year, hour, minute, timezoneSign,
+                timezoneHoursDiff, 0)
+        else
+            humanReadableDate = string.format("%s %d, %d",
+                os.date("%B", os.time({ year = year, month = month, day = day })),
+                day, year)
+        end
+        return humanReadableDate
     end
     return "No Date"
 end
@@ -34,7 +64,6 @@ local function compareDates(v)
     if v == nil then return end
     if v.properties.Dates ~= nil and v.properties.Dates.date ~= vim.NIL and v.properties.Dates.date.start ~= nil then
         local str = v.properties.Dates.date.start
-        vim.print(str)
         local ymd = string.sub(str, 1, 10)
         local final = ymd:gsub("-", "")
 
@@ -65,12 +94,11 @@ M.eventList = function(opts)
     local dates = {}
     for _, v in pairs(content) do
         if v.properties ~= nil and v.properties.Name ~= nil and v.properties.Name.title[1] ~= nil and compareDates(v) then
-            if compareDates(v) == true then
-                dates[v.properties.Name.title[1].plain_text] = compareDates(v)
-            else
-                dates[v.properties.Name.title[1].plain_text] = compareDates(v)
+            if compareDates(v) ~= true then
                 table.insert(data, v.properties.Name.title[1].plain_text)
             end
+            dates[v.properties.Name.title[1].plain_text] = compareDates(v)
+
             urls[v.properties.Name.title[1].plain_text] = v.url
             ids[v.properties.Name.title[1].plain_text] = v.id
         end
@@ -92,12 +120,12 @@ M.eventPreview = function(name)
     end
 
     if block == {} then return { "No data" } end
-    if block.properties.Dates ~= nil and block.properties.Dates.date ~= nil then
-        table.insert(final, "Date: " .. block.properties.Dates.date.start)
+    if block.properties.Dates ~= nil and block.properties.Dates.date ~= vim.NIL then
+        local toAdd = M.displayDate(block) or "No date"
+        table.insert(final, "Date: " .. toAdd)
         table.insert(final, " ")
-        vim.print(M.getDate(block))
     end
-    if block.properties.Type ~= nil and block.properties.Type.select ~= nil and block.properties.Type.select.name ~= nil then
+    if block.properties.Type ~= nil and block.properties.Type.select ~= vim.NIL and block.properties.Type.select.name ~= vim.NIL then
         local toAdd = block.properties.Type.select.name or "None"
         table.insert(final, "Type: " .. toAdd)
         table.insert(final, " ")
@@ -113,6 +141,7 @@ M.eventPreview = function(name)
                 l = l .. ", " .. v.name
             end
         end
+        if l == "Topics: " then l = l .. "None" end
         table.insert(final, l)
         table.insert(final, " ")
     end
