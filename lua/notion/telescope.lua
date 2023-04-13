@@ -16,7 +16,7 @@ local deleteItem = function(prompt_bufnr)
     local selection = action_state.get_selected_entry()
     actions.close(prompt_bufnr)
     request.deleteItem(selection)
-    notion.update()
+    notion.update({ silent = true })
     vim.notify("[Notion] Deleting...")
 end
 

@@ -3,20 +3,21 @@ local utils = require "notion-utils"
 
 --Gets date as comparable (integer)
 M.getDate = function(v)
-    if v.properties.Dates == nil and v.properties.Dates.date == vim.NIL and v.properties.Dates.date.start == nil then
+    if v.properties.Dates == nil or v.properties.Dates.date == vim.NIL or v.properties.Dates.date.start == nil then
         return
         "No Date"
     end
 
     local str = v.properties.Dates.date.start
 
-    local date = str:gsub("-", ""):gsub("T", ""):gsub(":", ""):gsub("+", ""):sub(5)
+    local date = str:gsub("-", ""):gsub("T", ""):gsub(":", ""):gsub("+", "")
+
     return date
 end
 
 --Returns full display date of the notion event
 M.displayDate = function(v)
-    if v.properties.Dates == nil and v.properties.Dates.date == vim.NIL and v.properties.Dates.date.start == nil then
+    if v.properties.Dates == nil or v.properties.Dates.date == vim.NIL or v.properties.Dates.date.start == nil then
         return
         "No date"
     end
@@ -42,7 +43,7 @@ end
 
 -- Returns only the time of day of the notion event
 M.displayShortDate = function(v)
-    if v.properties.Dates == nil and v.properties.Dates.date == vim.NIL and v.properties.Dates.date.start == nil then
+    if v.properties.Dates == nil or v.properties.Dates.date == vim.NIL or v.properties.Dates.date.start == nil then
         return "No date"
     end
 
@@ -62,11 +63,10 @@ M.displayShortDate = function(v)
     end
 end
 
---Returns earliest notion event as a block
 M.earliest = function(opts)
-    if opts == " " or opts == nil then return nil end
+    if opts == " " or opts == nil then return "Bug" end
     local content = (vim.json.decode(opts)).results
-    local biggestDate = "No earliest event"
+    local biggestDate = " "
     local data
     for k, v in pairs(content) do
         if v.properties.Dates ~= nil and v.properties.Dates.date ~= vim.NIL and v.properties.Dates.date.start ~= nil then
@@ -83,8 +83,8 @@ end
 
 local function compareDates(v)
     if v == nil then return end
-    if v.properties.Dates == nil and v.properties.Dates.date == vim.NIL and v.properties.Dates.date.start == nil then return true end
-
+    if v.properties.Dates == nil or v.properties.Dates.date == vim.NIL or v.properties.Dates.date.start == nil then return true end
+    vim.print(v.properties.Dates.date)
     local str = v.properties.Dates.date.start
     local ymd = string.sub(str, 1, 10)
     local final = ymd:gsub("-", "")

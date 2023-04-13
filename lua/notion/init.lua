@@ -34,9 +34,15 @@ M.raw = function()
 end
 
 --Updates the saved data
-M.update = function()
+M.update = function(opts)
+    opts = opts or { silent = false }
     if not initialized then
         return vim.print("[Notion] Not initialised, please run :NotionSetup")
+    end
+    local window = nil
+
+    if opts.silent == false and M.opts.notification == true then
+        window = require "notion.window".create("Updating")
     end
 
     local saveData = function(data)
@@ -47,7 +53,7 @@ M.update = function()
         file:close()
     end
 
-    req.request(function(data) saveData(data) end)
+    req.request(function(data) saveData(data) end, window)
 
     local path = vim.fn.stdpath("data") .. "/notion/prev.txt"
     local file = io.open(path, "w")
@@ -88,8 +94,8 @@ M.setup = function(opts)
     if not initialized then return end
 
     if M.opts.autoUpdate then
-        M.update()
-        vim.fn.timer_start(M.opts.updateDelay, function() M.update() end, { ["repeat"] = -1 })
+        M.update({ silent = true })
+        vim.fn.timer_start(M.opts.updateDelay, function() M.update({ silent = true }) end, { ["repeat"] = -1 })
     end
 end
 

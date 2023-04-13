@@ -8,5 +8,6 @@ M.keys = {
     openNotion = "o",
     editKey = "e"
 }
+M.notification = false
 
 return M

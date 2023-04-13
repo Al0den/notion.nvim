@@ -6,7 +6,7 @@ local parser = require "notion.parse"
 local M = {}
 
 --Makes a request to the Notion API, and calls the `callback` with the output
-M.request = function(callback)
+M.request = function(callback, window)
     local file = io.open(storage, "r")
     if file == nil then return end
 
@@ -35,6 +35,9 @@ M.request = function(callback)
                 callback(b._stdout_results[1])
             else
                 vim.print("[Notion] Error calling API")
+            end
+            if window ~= nil then
+                require "notion.window".close(window)
             end
         end,
     })
