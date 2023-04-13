@@ -1,6 +1,6 @@
 # notion.nvim
 
-[Neovim](https://neovim.io) wrapper for the notion api
+Access your neovim events from inside of neovim, and access the wrapper behind it
 
 ## Installation and setup
 

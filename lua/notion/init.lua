@@ -22,18 +22,6 @@ local prevStatus = function()
     end
 end
 
-local saveData = function(data)
-    local path = vim.fn.stdpath("data") .. "/notion/saved.txt"
-    local file = io.open(path, "w")
-    if file == nil then return vim.print("[Notion] Incorrect Setup") end
-    file:write(data)
-    file:close()
-end
-
-M.saveData = function(data)
-    saveData(data)
-end
-
 M.raw = function()
     local path = vim.fn.stdpath("data") .. "/notion/saved.txt"
     local file = io.open(path, "r")
@@ -47,6 +35,15 @@ M.update = function()
     if not initialized then
         return vim.print("[Notion] Not initialised, please run :NotionSetup")
     end
+
+    local saveData = function(data)
+        local path = vim.fn.stdpath("data") .. "/notion/saved.txt"
+        local file = io.open(path, "w")
+        if file == nil then return vim.print("[Notion] Incorrect Setup") end
+        file:write(data)
+        file:close()
+    end
+
     req.request(function(data) saveData(data) end)
 
     local path = vim.fn.stdpath("data") .. "/notion/prev.txt"
