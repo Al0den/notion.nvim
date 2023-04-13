@@ -5,6 +5,7 @@ local parser = require "notion.parse"
 
 local M = {}
 
+--Makes a request to the Notion API, and calls the `callback` with the output
 M.request = function(callback)
     local file = io.open(storage, "r")
     if file == nil then return end
@@ -41,6 +42,7 @@ M.request = function(callback)
     job:start()
 end
 
+--Get database object from its ID
 M.resolveDatabase = function(id, callback)
     local file = io.open(storage, "r")
     if file == nil then return end
@@ -66,18 +68,7 @@ M.resolveDatabase = function(id, callback)
     job:start()
 end
 
-local addItemDefaults = {
-    title = "No title",
-    date = vim.fn.strftime("%Y-%m-%d"),
-    topics = "",
-    type = ""
-}
-
-M.addItem = function(opts)
-    opts = vim.tbl_deep_extend("force", addItemDefaults, opts or {})
-    return vim.print("WIP")
-end
-
+--Delete item from Notion
 M.deleteItem = function(selection)
     local initData = require "notion".raw()
     local raw = parser.eventList(initData)

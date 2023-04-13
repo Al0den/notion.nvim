@@ -1,6 +1,7 @@
 local M = {}
 local utils = require "notion-utils"
 
+--Gets date as comparable (integer)
 M.getDate = function(v)
     if v.properties.Dates == nil and v.properties.Dates.date == vim.NIL and v.properties.Dates.date.start == nil then
         return
@@ -9,10 +10,11 @@ M.getDate = function(v)
 
     local str = v.properties.Dates.date.start
 
-    local date = str:gsub("-", ""):gsub("T", ""):gsub(":", ""):gsub("+", "")
+    local date = str:gsub("-", ""):gsub("T", ""):gsub(":", ""):gsub("+", ""):sub(5)
     return date
 end
 
+--Returns full display date of the notion event
 M.displayDate = function(v)
     if v.properties.Dates == nil and v.properties.Dates.date == vim.NIL and v.properties.Dates.date.start == nil then
         return
@@ -37,6 +39,8 @@ M.displayDate = function(v)
     return humanReadableDate
 end
 
+
+-- Returns only the time of day of the notion event
 M.displayShortDate = function(v)
     if v.properties.Dates == nil and v.properties.Dates.date == vim.NIL and v.properties.Dates.date.start == nil then
         return "No date"
@@ -58,6 +62,7 @@ M.displayShortDate = function(v)
     end
 end
 
+--Returns earliest notion event as a block
 M.earliest = function(opts)
     if opts == " " or opts == nil then return nil end
     local content = (vim.json.decode(opts)).results

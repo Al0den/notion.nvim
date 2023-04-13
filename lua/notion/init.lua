@@ -11,6 +11,7 @@ local function checkInit()
     end
 end
 
+--Save status for next neovim log in
 local prevStatus = function()
     local path = vim.fn.stdpath("data") .. "/notion/prev.txt"
     local file = io.open(path, "r")
@@ -22,6 +23,7 @@ local prevStatus = function()
     end
 end
 
+--Returns the raw output of the api, as a string
 M.raw = function()
     local path = vim.fn.stdpath("data") .. "/notion/saved.txt"
     local file = io.open(path, "r")
@@ -31,6 +33,7 @@ M.raw = function()
     return l
 end
 
+--Updates the saved data
 M.update = function()
     if not initialized then
         return vim.print("[Notion] Not initialised, please run :NotionSetup")
@@ -53,6 +56,7 @@ M.update = function()
     file:close()
 end
 
+--Make sure all files are created (Probably a better way to do this?)
 local function initialiseFiles()
     local path = vim.fn.stdpath("data") .. "/notion/"
     os.execute("mkdir -p " .. path)
@@ -61,6 +65,7 @@ local function initialiseFiles()
     os.execute("touch " .. path .. "saved.txt")
 end
 
+--Self explanatory
 local function clearData()
     os.execute("rm -rf -d -R " .. vim.fn.stdpath("data") .. "/notion/")
     initialized = false
@@ -68,6 +73,7 @@ local function clearData()
     vim.print("[Notion] Cleared all saved data")
 end
 
+--Initial function
 M.setup = function(opts)
     initialiseFiles()
     M.opts = vim.tbl_deep_extend("force", defaults, opts or {})

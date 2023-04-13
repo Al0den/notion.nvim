@@ -11,6 +11,7 @@ local notion = require "notion"
 
 local M = {}
 
+--Function linked to "deleteKey"
 local deleteItem = function(prompt_bufnr)
     local selection = action_state.get_selected_entry()
     actions.close(prompt_bufnr)
@@ -19,6 +20,7 @@ local deleteItem = function(prompt_bufnr)
     vim.notify("[Notion] Deleting...")
 end
 
+--Function linked to "editKey", as of right now only opens up notion
 local editItem = function(prompt_bufnr)
     local initData = notion.raw()
     local raw = parser.eventList(initData)
@@ -34,6 +36,7 @@ local openNotion = function(prompt_bufnr)
     os.execute("open notion://www.notion.so")
 end
 
+--Executed when an option is "hovered" inside the menu
 local function attach_mappings(prompt_bufnr, map)
     local initData = notion.raw()
     local raw = parser.eventList(initData)
@@ -41,6 +44,8 @@ local function attach_mappings(prompt_bufnr, map)
     if raw == nil then return end
 
     local urls = raw.urls
+
+    --On menu, open notion
     actions.select_default:replace(function()
         actions.close(prompt_bufnr)
         local selection = action_state.get_selected_entry()
@@ -57,6 +62,7 @@ local function attach_mappings(prompt_bufnr, map)
     return true
 end
 
+--Opens a menu containing all future events
 M.openFutureEventsMenu = function(opts)
     opts = opts or {}
 
@@ -67,6 +73,7 @@ M.openFutureEventsMenu = function(opts)
     local data = raw.data
     local dates = raw.dates
 
+    --Sort the events array (Their is a better way to do this)
     local function customSort(a, b)
         local dateA = dates[a] or "99999999"
         local dateB = dates[b] or "99999999"
@@ -81,6 +88,7 @@ M.openFutureEventsMenu = function(opts)
 
     table.sort(data, customSort)
 
+    --Initialise and show picker
     pickers.new(opts, {
         prompt_title = "Notion Future Event's",
         finder = finders.new_table {
