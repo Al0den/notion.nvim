@@ -15,9 +15,10 @@ local M = {}
 local deleteItem = function(prompt_bufnr)
     local selection = action_state.get_selected_entry()
     actions.close(prompt_bufnr)
-    request.deleteItem(selection)
-    notion.update({ silent = true })
-    vim.notify("[Notion] Deleting...")
+
+    local window = require "notion.window".create("Deleting")
+    request.deleteItem(selection, window)
+    notion.update({ silent = true, window = nil })
 end
 
 --Function linked to "editKey", as of right now only opens up notion

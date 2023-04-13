@@ -71,11 +71,11 @@ require"notion".setup {
         editKey = "e",
         openNotion = "o"
     },
-    notifications = false -- Would recommend using that, spits out errors right now
+    notifications = true
 }
 ```
 
-It can of course be overwritten. If you want to manually handle data update, `:NotionUpdate` or `require"notion".update()`. Those commands aren't meant to return anything apart errors, you'll need to call `require"notion".raw()` to get the new data, after it has been updated (asynchronous)
+It can of course be overwritten. If you want to manually handle data update, `:NotionUpdate` or `require"notion".update({})`. Those commands aren't meant to return anything apart errors, you'll need to call `require"notion".raw()` to get the new data, after it has been updated (asynchronous)
 
 ## Customisation
 
@@ -103,6 +103,6 @@ require"notion".openFutureEventsMenu()
 
 - Extend available functions list
 - Add reminder notifications
-- Add events/reminder creation feature
-- Improve deleting as to force deleting in saved data rather than force update (Not in the near future)
+- Add support for nvim-notify (Not in the near future)
+- Improve deleting as to force deleting in saved data rather than force api update (Not in the near future)
 - Add creation/modification capabilities (Useless?)

@@ -35,14 +35,21 @@ end
 
 --Updates the saved data
 M.update = function(opts)
-    opts = opts or { silent = false }
+    opts.silent = opts.silent or false
+    opts.window = opts.window or nil
+
     if not initialized then
         return vim.print("[Notion] Not initialised, please run :NotionSetup")
     end
+
     local window = nil
 
     if opts.silent == false and M.opts.notification == true then
         window = require "notion.window".create("Updating")
+    end
+
+    if opts.window ~= nil then
+        window = opts.window
     end
 
     local saveData = function(data)
@@ -86,7 +93,7 @@ M.setup = function(opts)
 
     vim.api.nvim_create_user_command("NotionSetup", function() initialized = require("notion.setup").initialisation() end,
         {})
-    vim.api.nvim_create_user_command("NotionUpdate", function() M.update() end, {})
+    vim.api.nvim_create_user_command("NotionUpdate", function() M.update({}) end, {})
     vim.api.nvim_create_user_command("Notion", function() require "notion.telescope".openFutureEventsMenu() end, {})
     vim.api.nvim_create_user_command("NotionClear", function() clearData() end, {})
 
@@ -95,7 +102,8 @@ M.setup = function(opts)
 
     if M.opts.autoUpdate then
         M.update({ silent = true })
-        vim.fn.timer_start(M.opts.updateDelay, function() M.update({ silent = true }) end, { ["repeat"] = -1 })
+        vim.fn.timer_start(M.opts.updateDelay, function() M.update({ silent = true, window = nil }) end,
+            { ["repeat"] = -1 })
     end
 end
 

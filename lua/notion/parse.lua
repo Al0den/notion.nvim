@@ -84,7 +84,6 @@ end
 local function compareDates(v)
     if v == nil then return end
     if v.properties.Dates == nil or v.properties.Dates.date == vim.NIL or v.properties.Dates.date.start == nil then return true end
-    vim.print(v.properties.Dates.date)
     local str = v.properties.Dates.date.start
     local ymd = string.sub(str, 1, 10)
     local final = ymd:gsub("-", "")

@@ -37,7 +37,9 @@ M.request = function(callback, window)
                 vim.print("[Notion] Error calling API")
             end
             if window ~= nil then
-                require "notion.window".close(window)
+                vim.schedule(function()
+                    require "notion.window".close(window)
+                end)
             end
         end,
     })
@@ -72,7 +74,7 @@ M.resolveDatabase = function(id, callback)
 end
 
 --Delete item from Notion
-M.deleteItem = function(selection)
+M.deleteItem = function(selection, window)
     local initData = require "notion".raw()
     local raw = parser.eventList(initData)
 
@@ -97,7 +99,9 @@ M.deleteItem = function(selection)
         enabled_recording = true,
         on_exit = function(b, code)
             if code == 0 then
-                vim.print("[Notion] Deleted")
+                vim.schedule(function()
+                    require "notion.window".close(window)
+                end)
             else
                 print("[Notion] Error calling API")
             end
