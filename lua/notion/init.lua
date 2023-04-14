@@ -39,6 +39,7 @@ end
 
 --Updates the saved data
 M.update = function(opts)
+    opts = opts or {}
     opts.silent = opts.silent or false
     opts.window = opts.window or nil
 
@@ -97,7 +98,7 @@ M.setup = function(opts)
 
     vim.api.nvim_create_user_command("NotionSetup", function() initialized = require("notion.setup").initialisation() end,
         {})
-    vim.api.nvim_create_user_command("NotionUpdate", function() M.update({}) end, {})
+    vim.api.nvim_create_user_command("NotionUpdate", function() M.update() end, {})
     vim.api.nvim_create_user_command("Notion", function() require "notion.telescope".openFutureEventsMenu() end, {})
     vim.api.nvim_create_user_command("NotionClear", function() clearData() end, {})
 
