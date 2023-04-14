@@ -1,5 +1,59 @@
 local M = {}
-local utils = require "notion-utils"
+
+--Creates the markdown file for user edition
+local function createMarkdownFile(markdown)
+    vim.print(markdown)
+end
+
+--Transforms children blocks into markdown
+local function childrenToMarkdown(childrens)
+    local markdown = ""
+    for _, result in ipairs(childrens) do
+        if result.object ~= "block" then return end
+
+        if result.type == "heading_2" then
+            markdown = markdown .. "# " .. result.heading_2.rich_text[1].plain_text .. "\n"
+        elseif result.type == "paragraph" then
+            local content = result.paragraph.rich_text[1].plain_text
+            local url = result.paragraph.rich_text[1].text.link.url
+            markdown = markdown .. content
+            if url then
+                markdown = markdown .. " [Read more](" .. url .. ")"
+            end
+            markdown = markdown .. "\n\n"
+        end
+    end
+    return markdown
+end
+
+--Converts notion pages to markdown, and calls the create markdown function
+M.notionToMarkdown = function(block)
+    local name = block.properties.Name.title[1].plain_text
+    local url = block.url
+    local dates = block.properties.Dates.date.start
+    local topic = block.properties.Topic.multi_select[1].name
+    local type = block.properties.Type.select.name
+
+    local markdown = string.format("# [%s](%s)\n\n- **Dates:** %s\n- **Topic:** %s\n- **Type:** %s\n",
+        name, url, dates, topic, type)
+
+    local function callback(childrens)
+        childrens = vim.json.decode(childrens).results
+        createMarkdownFile(markdown .. "\n \n" .. childrenToMarkdown(childrens))
+    end
+
+    require "notion.request".getChildren(block.id, callback)
+end
+
+--Parse ISO8601 date (Function reused and heavy, relocated to this file)
+M.parseISO8601Date = function(isoDate)
+    local year, month, day, hour, minute, second, timezone = isoDate:match(
+        "(%d+)-(%d+)-(%d+)T?(%d*):?(%d*):?(%d*).?([%+%-]?)(%d*:?%d*)")
+    return tonumber(year), tonumber(month), tonumber(day), tonumber(hour), tonumber(minute), tonumber(second),
+        timezone,
+        timezone and
+        (tonumber(timezone) or timezone)
+end
 
 --Gets date as comparable (integer)
 M.getDate = function(v)
@@ -23,7 +77,7 @@ M.displayDate = function(v)
     end
 
     local inputDate = v.properties.Dates.date.start
-    local year, month, day, hour, minute, second, timezone, timezoneValue = utils.parseISO8601Date(inputDate)
+    local year, month, day, hour, minute, second, timezone, timezoneValue = M.parseISO8601Date(inputDate)
     local humanReadableDate
 
     if hour and minute and second then
@@ -48,7 +102,7 @@ M.displayShortDate = function(v)
     end
 
     local inputDate = v.properties.Dates.date.start
-    local year, month, day, hour, minute, second, timezone, timezoneValue = utils.parseISO8601Date(inputDate)
+    local year, month, day, hour, minute, _, _, _ = M.parseISO8601Date(inputDate)
     local currentDateTime = os.date("*t")
 
     local currentYear = currentDateTime.year
@@ -68,7 +122,7 @@ M.earliest = function(opts)
     local content = (vim.json.decode(opts)).results
     local biggestDate = " "
     local data
-    for k, v in pairs(content) do
+    for _, v in pairs(content) do
         if v.properties.Dates ~= nil and v.properties.Dates.date ~= vim.NIL and v.properties.Dates.date.start ~= nil then
             local final = M.getDate(v)
 
@@ -96,7 +150,7 @@ end
 
 M.objectFromName = function(name)
     local raw = vim.json.decode(require "notion".raw()).results
-    for i, v in pairs(raw) do
+    for _, v in pairs(raw) do
         if v.properties ~= nil and v.properties.Name ~= nil and v.properties.Name.title[1] ~= nil and v.properties.Name.title[1].plain_text == name then
             return v
         end

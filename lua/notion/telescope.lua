@@ -23,14 +23,10 @@ end
 
 --Function linked to "editKey", as of right now only opens up notion
 local editItem = function(prompt_bufnr)
-    local initData = notion.raw()
-    local raw = parser.eventList(initData)
+    local selection = action_state.get_selected_entry()
+    local v = require "notion.parse".objectFromName(selection[1])
 
-    if raw == nil then return end
-
-    local urls = raw.urls
-
-    os.execute("open notion://" .. "www." .. urls[action_state.get_selected_entry()[1]]:sub(9))
+    require "notion-utils".notionToMarkdown(v)
 end
 
 local openNotion = function(prompt_bufnr)

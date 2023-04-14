@@ -5,7 +5,7 @@ local parser = require "notion.parse"
 
 local M = {}
 
---Makes a request to the Notion API, and calls the `callback` with the output
+--Makes an asynchronous request to the Notion API, and calls the `callback` with the output
 M.request = function(callback, window)
     local file = io.open(storage, "r")
     if file == nil then return end
@@ -106,6 +106,32 @@ M.deleteItem = function(selection, window)
                 print("[Notion] Error calling API")
             end
         end,
+    })
+
+    job:start()
+end
+
+--Get childrens of particular block ID
+M.getChildren = function(id, callback)
+    local file = io.open(storage, "r")
+    if file == nil then return end
+    local l = file:read("*a")
+
+    local job = Job:new({
+        command = 'curl',
+        args = {
+            '-H', 'Authorization: Bearer ' .. l,
+            '-H', 'Notion-Version: 2022-02-22',
+            'https://api.notion.com/v1/blocks/' .. id .. '/children'
+        },
+        enabled_recording = true,
+        on_exit = function(b, code)
+            if code == 0 then
+                callback(b._stdout_results[1])
+            else
+                vim.print("[Notion] Error calling api")
+            end
+        end
     })
 
     job:start()
