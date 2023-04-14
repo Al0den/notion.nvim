@@ -1,8 +1,17 @@
 local M = {}
+local actions = require "telescope.actions"
 
 --Creates the markdown file for user edition
-local function createMarkdownFile(markdown)
-    vim.print(markdown)
+local function createMarkdownFile(markdown, buf)
+    vim.schedule(function()
+        local file = io.open(vim.fn.stdpath("data") .. "/notion/temp.md", "w")
+        if file == nil then return vim.print("[Notion] Incorrect Setup") end
+        file:write(markdown)
+        file:close()
+        actions.close(buf)
+
+        vim.cmd("vsplit " .. vim.fn.stdpath("data") .. "/notion/temp.md")
+    end)
 end
 
 --Transforms children blocks into markdown
@@ -27,7 +36,7 @@ local function childrenToMarkdown(childrens)
 end
 
 --Converts notion pages to markdown, and calls the create markdown function
-M.notionToMarkdown = function(block)
+M.notionToMarkdown = function(block, buf)
     local name = block.properties.Name.title[1].plain_text
     local url = block.url
     local dates = block.properties.Dates.date.start
@@ -39,13 +48,13 @@ M.notionToMarkdown = function(block)
 
     local function callback(childrens)
         childrens = vim.json.decode(childrens).results
-        createMarkdownFile(markdown .. "\n \n" .. childrenToMarkdown(childrens))
+        createMarkdownFile(markdown .. "\n \n" .. childrenToMarkdown(childrens), buf)
     end
 
     require "notion.request".getChildren(block.id, callback)
 end
 
---Parse ISO8601 date (Function reused and heavy, relocated to this file)
+--Parse ISO8601 date, and return the values separated
 M.parseISO8601Date = function(isoDate)
     local year, month, day, hour, minute, second, timezone = isoDate:match(
         "(%d+)-(%d+)-(%d+)T?(%d*):?(%d*):?(%d*).?([%+%-]?)(%d*:?%d*)")

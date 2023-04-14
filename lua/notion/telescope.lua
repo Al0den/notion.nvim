@@ -26,7 +26,7 @@ local editItem = function(prompt_bufnr)
     local selection = action_state.get_selected_entry()
     local v = require "notion.parse".objectFromName(selection[1])
 
-    parser.notionToMarkdown(v)
+    parser.notionToMarkdown(v, prompt_bufnr)
 end
 
 local openNotion = function(prompt_bufnr)

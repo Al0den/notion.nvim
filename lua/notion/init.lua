@@ -79,6 +79,7 @@ local function initialiseFiles()
     os.execute("touch " .. path .. "data.txt")
     os.execute("touch " .. path .. "prev.txt")
     os.execute("touch " .. path .. "saved.txt")
+    os.execute("touch " .. path .. "temp.md")
 end
 
 --Self explanatory
