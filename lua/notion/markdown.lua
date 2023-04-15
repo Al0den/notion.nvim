@@ -11,7 +11,6 @@ local function createFile(text)
     end)
 end
 
-
 M.page = function(data, id)
     local ftext = " # Title: " .. data.properties.title.title[1].plain_text
     local buf = require "notion.window".create("Loading...")

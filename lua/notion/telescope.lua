@@ -34,18 +34,15 @@ end
 
 --Executed when an option is "hovered" inside the menu
 local function attach_mappings(prompt_bufnr, map)
-    local initData = notion.raw()
-
-    local data = parser.eventList(initData)
-
     --On menu, open notion
     actions.select_default:replace(function()
         actions.close(prompt_bufnr)
         local selection = action_state.get_selected_entry()
+        local obj = (parser.objectFromID(selection.value.id)).result
         if notion.opts.open == "notion" then
-            os.execute("open notion://" .. "www." .. urls[selection[1]]:sub(9))
+            os.execute("open notion://" .. obj.url)
         else
-            os.execute("open " .. urls[selection[1]])
+            os.execute("open " .. obj.url)
         end
     end)
     map("n", notion.opts.keys.deleteKey, deleteItem)
@@ -54,6 +51,7 @@ local function attach_mappings(prompt_bufnr, map)
 
     return true
 end
+
 M.openMenu = function(opts)
     opts = opts or {}
 
@@ -86,3 +84,5 @@ M.openMenu = function(opts)
         }
     }):find()
 end
+
+return M

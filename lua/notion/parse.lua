@@ -14,7 +14,7 @@ M.objectFromID = function(id)
 end
 
 --Converts notion objects to markdown
-M.notionToMarkdown = function(selection, buf)
+M.notionToMarkdown = function(selection)
     local data = M.objectFromID(selection.value.id)
     local markdownParser = require "notion.markdown"
     if data.object == "database_id" then
@@ -42,9 +42,7 @@ M.getDate = function(v)
         return
         "No Date"
     end
-
     local str = v.properties.Dates.date.start
-
     local date = str:gsub("-", ""):gsub("T", ""):gsub(":", ""):gsub("+", "")
 
     return date
@@ -125,13 +123,13 @@ M.eventList = function(opts)
     local data = {}
     for _, v in pairs(content) do
         --Get the event for database entries
-        if v.properties ~= nil and v.properties.Name ~= nil and v.properties.Name.title[1] ~= nil then
+        if v.properties ~= nil and v.properties.Name ~= nil and v.properties.Name.title[1] ~= nil and (v.parent.type == "database_id" or v.parent.type == "page_id") then
             table.insert(data, {
                 displayName = v.properties.Name.title[1].text.content,
                 id = v.id
             })
             --Get the event for pages
-        elseif v.properties.title ~= nil and v.properties.title.title[1] ~= nil and v.properties.title.title[1].text ~= nil then
+        elseif v.properties.title ~= nil and v.properties.title.title[1] ~= nil and v.properties.title.title[1].text ~= nil and (v.parent.type == "page_id" or v.parent.type == "database_id") then
             table.insert(data, {
                 displayName = v.properties.title.title[1].text.content,
                 id = v.id
