@@ -24,8 +24,8 @@ end
 --Function linked to "editKey", as of right now only opens up notion
 local editItem = function(prompt_bufnr)
     local selection = action_state.get_selected_entry()
-
-    parser.notionToMarkdown(selection[1])
+    actions.close(prompt_bufnr)
+    parser.notionToMarkdown(selection)
 end
 
 local openNotion = function(prompt_bufnr)

@@ -18,14 +18,25 @@ end
 M.nextEventDate = function()
     local data = getEarliestData()
     if data == nil then return " " end
-    return parser.displayDate(data)
+    for i, v in pairs(data.properties) do
+        if v.type == "date" then
+            return parser.displayDate(v.date.start)
+        end
+    end
+    return " "
 end
 
 
 M.nextEventShortDate = function()
     local data = getEarliestData()
     if data == nil then return " " end
-    return parser.displayShortDate(data)
+    for i, v in pairs(data.properties) do
+        if v.type == "date" then
+            return parser.displayShortDate(v.date.start)
+        end
+    end
+
+    return " "
 end
 
 M.nextEvent = function()

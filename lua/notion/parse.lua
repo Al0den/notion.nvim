@@ -1,61 +1,28 @@
 local M = {}
 
-local actions = require "telescope.actions"
-
-M.objectFromName = function(name)
-    local raw = vim.json.decode(require "notion".raw()).results
-    for _, v in pairs(raw) do
-        if v.properties ~= nil and v.properties.Name ~= nil and v.properties.Name.title[1] ~= nil and v.properties.Name.title[1].plain_text == name then
-            return {
-                object = "databaseEntry",
-                result = v
-            }
-        elseif v.properties ~= nil and v.properties.title ~= nil and v.properties.title.title[1] ~= nil and v.properties.title.title[1].text ~= nil and v.properties.title.title[1].text.content == name then
-            return {
-                object = "page",
-                result = v
-            }
-        end
-    end
-    return "Problem"
-end
-
 M.objectFromID = function(id)
     local raw = vim.json.decode(require "notion".raw()).results
     for _, v in pairs(raw) do
         if v.id == id then
-            return v
+            return {
+                object = v.parent.type,
+                result = v
+            }
         end
     end
     return "Problem"
 end
 
---Transforms a database entry into markdown
-local function databaseMarkdown(block)
-    vim.print(block.properties)
-end
-
---Transform page childrens to markdown
-local function pageChildrenMarkdown(pageID)
-
-end
-
---Transforms notion page to markdown
-local function pageMarkdown(block)
-
-end
-
 --Converts notion objects to markdown
 M.notionToMarkdown = function(selection, buf)
-    local data = M.objectFromName(selection)
-    local block = data.result
-
-    if data.object == "databaseEntry" then
-        return databaseMarkdown(block)
-    elseif data.object == "page" then
-        return pageMarkdown(block) .. "\n\n" .. pageChildrenMarkdown(block.id)
+    local data = M.objectFromID(selection.value.id)
+    local markdownParser = require "notion.markdown"
+    if data.object == "database_id" then
+        return markdownParser.databaseEntry(data.result, selection.value.id)
+    elseif data.object == "page_id" then
+        return markdownParser.page(data.result, selection.value.id)
     else
-        return nil
+        return vim.print("[Notion] Cannot edit this event")
     end
 end
 
@@ -84,13 +51,7 @@ M.getDate = function(v)
 end
 
 --Returns full display date of the notion event
-M.displayDate = function(v)
-    if v.properties.Dates == nil or v.properties.Dates.date == vim.NIL or v.properties.Dates.date.start == nil then
-        return
-        "No date"
-    end
-
-    local inputDate = v.properties.Dates.date.start
+M.displayDate = function(inputDate)
     local year, month, day, hour, minute, second, timezone, timezoneValue = M.parseISO8601Date(inputDate)
     local humanReadableDate
 
@@ -110,12 +71,7 @@ end
 
 
 -- Returns only the time of day of the notion event
-M.displayShortDate = function(v)
-    if v.properties.Dates == nil or v.properties.Dates.date == vim.NIL or v.properties.Dates.date.start == nil then
-        return "No date"
-    end
-
-    local inputDate = v.properties.Dates.date.start
+M.displayShortDate = function(inputDate)
     local year, month, day, hour, minute, _, _, _ = M.parseISO8601Date(inputDate)
     local currentDateTime = os.date("*t")
 
@@ -127,7 +83,7 @@ M.displayShortDate = function(v)
         local formattedTime = string.format("%02d:%02d", hour, minute)
         return formattedTime
     else
-        return M.displayDate(v)
+        return M.displayDate(inputDate)
     end
 end
 
@@ -212,13 +168,12 @@ end
 M.eventPreview = function(data)
     local id = data.value.id
 
-    local block = M.objectFromID(id)
+    local block = (M.objectFromID(id)).result
     local final = { "Name: " .. data.value.displayName, " " }
 
     for i, v in pairs(block.properties) do
         if v.type == "select" and v.type.select ~= nil then
             table.insert(final, v.type .. ": " .. v.select.name)
-
             table.insert(final, " ")
         elseif v.type == "multi_select" then
             local temp = {}
@@ -226,7 +181,9 @@ M.eventPreview = function(data)
                 table.insert(temp, j.name)
             end
             table.insert(final, v.type .. ": " .. table.concat(temp, ", "))
-
+            table.insert(final, " ")
+        elseif v.type == "date" then
+            table.insert(final, v.type .. ": " .. M.displayDate(v.date.start))
             table.insert(final, " ")
         end
     end
