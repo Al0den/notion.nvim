@@ -1,57 +1,62 @@
 local M = {}
+
 local actions = require "telescope.actions"
 
---Creates the markdown file for user edition
-local function createMarkdownFile(markdown, buf)
-    vim.schedule(function()
-        local file = io.open(vim.fn.stdpath("data") .. "/notion/temp.md", "w")
-        if file == nil then return vim.print("[Notion] Incorrect Setup") end
-        file:write(markdown)
-        file:close()
-        actions.close(buf)
-
-        vim.cmd("vsplit " .. vim.fn.stdpath("data") .. "/notion/temp.md")
-    end)
-end
-
---Transforms children blocks into markdown
-local function childrenToMarkdown(childrens)
-    local markdown = ""
-    for _, result in ipairs(childrens) do
-        if result.object ~= "block" then return end
-
-        if result.type == "heading_2" then
-            markdown = markdown .. "# " .. result.heading_2.rich_text[1].plain_text .. "\n"
-        elseif result.type == "paragraph" then
-            local content = result.paragraph.rich_text[1].plain_text
-            local url = result.paragraph.rich_text[1].text.link.url
-            markdown = markdown .. content
-            if url then
-                markdown = markdown .. " [Read more](" .. url .. ")"
-            end
-            markdown = markdown .. "\n\n"
+M.objectFromName = function(name)
+    local raw = vim.json.decode(require "notion".raw()).results
+    for _, v in pairs(raw) do
+        if v.properties ~= nil and v.properties.Name ~= nil and v.properties.Name.title[1] ~= nil and v.properties.Name.title[1].plain_text == name then
+            return {
+                object = "databaseEntry",
+                result = v
+            }
+        elseif v.properties ~= nil and v.properties.title ~= nil and v.properties.title.title[1] ~= nil and v.properties.title.title[1].text ~= nil and v.properties.title.title[1].text.content == name then
+            return {
+                object = "page",
+                result = v
+            }
         end
     end
-    return markdown
+    return "Problem"
 end
 
---Converts notion pages to markdown, and calls the create markdown function
-M.notionToMarkdown = function(block, buf)
-    local name = block.properties.Name.title[1].plain_text
-    local url = block.url
-    local dates = block.properties.Dates.date.start
-    local topic = block.properties.Topic.multi_select[1].name
-    local type = block.properties.Type.select.name
-
-    local markdown = string.format("# [%s](%s)\n\n- **Dates:** %s\n- **Topic:** %s\n- **Type:** %s\n",
-        name, url, dates, topic, type)
-
-    local function callback(childrens)
-        childrens = vim.json.decode(childrens).results
-        createMarkdownFile(markdown .. "\n \n" .. childrenToMarkdown(childrens), buf)
+M.objectFromID = function(id)
+    local raw = vim.json.decode(require "notion".raw()).results
+    for _, v in pairs(raw) do
+        if v.id == id then
+            return v
+        end
     end
+    return "Problem"
+end
 
-    require "notion.request".getChildren(block.id, callback)
+--Transforms a database entry into markdown
+local function databaseMarkdown(block)
+    vim.print(block.properties)
+end
+
+--Transform page childrens to markdown
+local function pageChildrenMarkdown(pageID)
+
+end
+
+--Transforms notion page to markdown
+local function pageMarkdown(block)
+
+end
+
+--Converts notion objects to markdown
+M.notionToMarkdown = function(selection, buf)
+    local data = M.objectFromName(selection)
+    local block = data.result
+
+    if data.object == "databaseEntry" then
+        return databaseMarkdown(block)
+    elseif data.object == "page" then
+        return pageMarkdown(block) .. "\n\n" .. pageChildrenMarkdown(block.id)
+    else
+        return nil
+    end
 end
 
 --Parse ISO8601 date, and return the values separated
@@ -157,17 +162,30 @@ local function compareDates(v)
     return false
 end
 
-M.objectFromName = function(name)
-    local raw = vim.json.decode(require "notion".raw()).results
-    for _, v in pairs(raw) do
-        if v.properties ~= nil and v.properties.Name ~= nil and v.properties.Name.title[1] ~= nil and v.properties.Name.title[1].plain_text == name then
-            return v
-        end
-    end
-    return "Problem"
-end
 
 M.eventList = function(opts)
+    if opts == " " or opts == nil then return nil end
+    local content = vim.json.decode(opts).results
+    local data = {}
+    for _, v in pairs(content) do
+        --Get the event for database entries
+        if v.properties ~= nil and v.properties.Name ~= nil and v.properties.Name.title[1] ~= nil then
+            table.insert(data, {
+                displayName = v.properties.Name.title[1].text.content,
+                id = v.id
+            })
+            --Get the event for pages
+        elseif v.properties.title ~= nil and v.properties.title.title[1] ~= nil and v.properties.title.title[1].text ~= nil then
+            table.insert(data, {
+                displayName = v.properties.title.title[1].text.content,
+                id = v.id
+            })
+        end
+    end
+    return data
+end
+
+M.futureEventList = function(opts)
     if opts == " " or opts == nil then return nil end
     local content = vim.json.decode(opts).results
     local data = {}
@@ -175,6 +193,7 @@ M.eventList = function(opts)
     local ids = {}
     local dates = {}
     for _, v in pairs(content) do
+        --Only works on database entries, dont see any use for others?
         if v.properties ~= nil and v.properties.Name ~= nil and v.properties.Name.title[1] ~= nil and compareDates(v) then
             if compareDates(v) ~= true then
                 table.insert(data, v.properties.Name.title[1].plain_text)
@@ -188,45 +207,24 @@ M.eventList = function(opts)
     return { data = data, urls = urls, ids = ids, dates = dates }
 end
 
-M.eventPreview = function(name)
-    local opts = require "notion".raw()
-    local content = (vim.json.decode(opts)).results
+M.eventPreview = function(data)
+    local id = data.value.id
 
-    local final = {}
-    local block = {}
-
-    for _, v in pairs(content) do
-        if v.properties ~= nil and v.properties.Name ~= nil and v.properties.Name.title[1] ~= nil and v.properties.Name.title[1].plain_text == name then
-            block = v
-        end
-    end
-
-    if block == {} then return { "No data" } end
-    if block.properties.Dates ~= nil and block.properties.Dates.date ~= vim.NIL then
-        local toAdd = M.displayDate(block) or "No date"
-        table.insert(final, "Date: " .. toAdd)
-        table.insert(final, " ")
-    end
-    if block.properties.Type ~= nil and block.properties.Type.select ~= vim.NIL and block.properties.Type.select.name ~= vim.NIL then
-        local toAdd = block.properties.Type.select.name or "None"
-        table.insert(final, "Type: " .. toAdd)
-        table.insert(final, " ")
-    end
-    if block.properties.Topic ~= nil then
-        local l = "Topics: "
-        local count = true
-        for _, v in pairs(block.properties.Topic.multi_select) do
-            if count == true then
-                l = l .. v.name
-                count = false
-            else
-                l = l .. ", " .. v.name
+    local block = M.objectFromID(id)
+    local final = { "Name: " .. data.value.displayName, " " }
+    for i, v in pairs(block.properties) do
+        if v.type == "select" and v.type.select ~= nil then
+            table.insert(final, v.type .. ": " .. v.select.name)
+        elseif v.type == "multi_select" then
+            local temp = {}
+            for _, j in pairs(v.multi_select) do
+                table.insert(temp, j.name)
             end
+            table.insert(final, v.type .. ": " .. table.concat(temp, ", "))
         end
-        if l == "Topics: " then l = l .. "None" end
-        table.insert(final, l)
         table.insert(final, " ")
     end
+
     return final
 end
 

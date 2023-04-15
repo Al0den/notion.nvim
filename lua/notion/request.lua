@@ -137,4 +137,54 @@ M.getChildren = function(id, callback)
     job:start()
 end
 
+M.savePage = function(data, id)
+    local file = io.open(storage, "r")
+    if file == nil then return end
+    local l = file:read("*a")
+
+    local job = Job:new({
+        command = 'curl',
+        args = {
+            'https://api.notion.com/v1/pages/' .. id,
+            '-H', 'Authorization: Bearer ' .. l,
+            '-H', 'Content-Type: application/json',
+            '-H', 'Notion-Version: 2022-06-28',
+            '-X', 'PATCH',
+            '--data', vim.fn.json_encode(data),
+        },
+        on_exit = function(b, code)
+            if code == 0 then
+                vim.print("[Notion] Page updated successfully")
+            end
+        end
+    })
+
+    job:start()
+end
+
+M.saveChildrens = function(data, id)
+    local file = io.open(storage, "r")
+    if file == nil then return end
+    local l = file:read("*a")
+
+    local job = Job:new({
+        command = 'curl',
+        args = {
+            'https://api.notion.com/v1/blocks/' .. id .. '/children',
+            '-H', 'Authorization: Bearer ' .. l,
+            '-H', 'Content-Type: application/json',
+            '-H', 'Notion-Version: 2022-06-28',
+            '-X', 'PATCH',
+            '--data', vim.fn.json_encode(data),
+        },
+        on_exit = function(b, code)
+            if code == 0 then
+                vim.print("[Notion] Childrens updated successfully")
+            end
+        end
+    })
+
+    job:start()
+end
+
 return M

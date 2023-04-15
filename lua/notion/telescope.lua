@@ -24,9 +24,8 @@ end
 --Function linked to "editKey", as of right now only opens up notion
 local editItem = function(prompt_bufnr)
     local selection = action_state.get_selected_entry()
-    local v = require "notion.parse".objectFromName(selection[1])
 
-    parser.notionToMarkdown(v, prompt_bufnr)
+    parser.notionToMarkdown(selection[1])
 end
 
 local openNotion = function(prompt_bufnr)
@@ -36,11 +35,8 @@ end
 --Executed when an option is "hovered" inside the menu
 local function attach_mappings(prompt_bufnr, map)
     local initData = notion.raw()
-    local raw = parser.eventList(initData)
 
-    if raw == nil then return end
-
-    local urls = raw.urls
+    local data = parser.eventList(initData)
 
     --On menu, open notion
     actions.select_default:replace(function()
@@ -58,6 +54,38 @@ local function attach_mappings(prompt_bufnr, map)
 
     return true
 end
+M.openMenu = function(opts)
+    opts = opts or {}
+
+    if not notion.checkInit() then return end
+
+    local initData = notion.raw()
+    local data = parser.eventList(initData)
+    if data == nil then return end
+
+    --Initialise and show picker
+    pickers.new(opts, {
+        prompt_title = "Notion Event's",
+        finder = finders.new_table {
+            results = data,
+            entry_maker = function(entry)
+                return {
+                    value = entry,
+                    display = entry["displayName"],
+                    ordinal = entry["displayName"],
+                }
+            end
+        },
+        sorter = conf.generic_sorter(opts),
+        attach_mappings = attach_mappings,
+        previewer = previewers.new_buffer_previewer {
+            title = "Information",
+            define_preview = function(self, entry, status)
+                vim.api.nvim_buf_set_lines(self.state.bufnr, 0, -1, false, parser.eventPreview(entry))
+            end
+        }
+    }):find()
+end
 
 --Opens a menu containing all future events
 M.openFutureEventsMenu = function(opts)
@@ -66,7 +94,7 @@ M.openFutureEventsMenu = function(opts)
     if not notion.checkInit() then return end
 
     local initData = notion.raw()
-    local raw = parser.eventList(initData)
+    local raw = parser.futureEventList(initData)
     if raw == nil then return end
 
     local data = raw.data
