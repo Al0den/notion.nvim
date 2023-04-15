@@ -185,6 +185,7 @@ M.eventList = function(opts)
     return data
 end
 
+--Obsolete, needs to follow recode
 M.futureEventList = function(opts)
     if opts == " " or opts == nil then return nil end
     local content = vim.json.decode(opts).results
@@ -207,22 +208,27 @@ M.futureEventList = function(opts)
     return { data = data, urls = urls, ids = ids, dates = dates }
 end
 
+--Event previewer, returns array of string
 M.eventPreview = function(data)
     local id = data.value.id
 
     local block = M.objectFromID(id)
     local final = { "Name: " .. data.value.displayName, " " }
+
     for i, v in pairs(block.properties) do
         if v.type == "select" and v.type.select ~= nil then
             table.insert(final, v.type .. ": " .. v.select.name)
+
+            table.insert(final, " ")
         elseif v.type == "multi_select" then
             local temp = {}
             for _, j in pairs(v.multi_select) do
                 table.insert(temp, j.name)
             end
             table.insert(final, v.type .. ": " .. table.concat(temp, ", "))
+
+            table.insert(final, " ")
         end
-        table.insert(final, " ")
     end
 
     return final

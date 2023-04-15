@@ -74,13 +74,7 @@ M.resolveDatabase = function(id, callback)
 end
 
 --Delete item from Notion
-M.deleteItem = function(selection, window)
-    local initData = require "notion".raw()
-    local raw = parser.eventList(initData)
-
-    if raw == nil then return end
-    local id = raw.ids[selection[1]]
-
+M.deleteItem = function(id, window)
     local file = io.open(storage, "r")
 
     if file == nil then return end

@@ -17,7 +17,7 @@ local deleteItem = function(prompt_bufnr)
     actions.close(prompt_bufnr)
 
     local window = require "notion.window".create("Deleting")
-    request.deleteItem(selection, window)
+    request.deleteItem(selection.value.id, window)
     notion.update({ silent = true, window = nil })
 end
 
