@@ -141,29 +141,6 @@ M.eventList = function(opts)
     return data
 end
 
---Obsolete, needs to follow recode
-M.futureEventList = function(opts)
-    if opts == " " or opts == nil then return nil end
-    local content = vim.json.decode(opts).results
-    local data = {}
-    local urls = {}
-    local ids = {}
-    local dates = {}
-    for _, v in pairs(content) do
-        --Only works on database entries, dont see any use for others?
-        if v.properties ~= nil and v.properties.Name ~= nil and v.properties.Name.title[1] ~= nil and compareDates(v) then
-            if compareDates(v) ~= true then
-                table.insert(data, v.properties.Name.title[1].plain_text)
-            end
-            dates[v.properties.Name.title[1].plain_text] = compareDates(v)
-
-            urls[v.properties.Name.title[1].plain_text] = v.url
-            ids[v.properties.Name.title[1].plain_text] = v.id
-        end
-    end
-    return { data = data, urls = urls, ids = ids, dates = dates }
-end
-
 --Event previewer, returns array of string
 M.eventPreview = function(data)
     local id = data.value.id

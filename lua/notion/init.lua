@@ -100,7 +100,7 @@ M.setup = function(opts)
     vim.api.nvim_create_user_command("NotionSetup", function() initialized = require("notion.setup").initialisation() end,
         {})
     vim.api.nvim_create_user_command("NotionUpdate", function() M.update() end, {})
-    vim.api.nvim_create_user_command("Notion", function() require "notion.telescope".openFutureEventsMenu() end, {})
+    vim.api.nvim_create_user_command("Notion", function() require "notion.telescope".openMenu() end, {})
     vim.api.nvim_create_user_command("NotionClear", function() clearData() end, {})
 
     prevStatus()

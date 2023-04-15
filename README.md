@@ -95,8 +95,8 @@ require"notion.components".nextEventName()
 require"notion.components".nextEventDate() --In its full format
 require"notion.components".nextEventShortDate() --Matches by day to adapt displaystyle, used in `nextEvent()`
 
---Display all future events menu
-require"notion".openFutureEventsMenu()
+--Display all events menu
+require"notion".openMenu()
 ```
 
 ## Roadmap
@@ -105,4 +105,3 @@ require"notion".openFutureEventsMenu()
 - Add reminder notifications
 - Add support for nvim-notify (Not in the near future)
 - Improve deleting as to force deleting in saved data rather than force api update (Not in the near future)
-- Add creation/modification capabilities (Useless?)
