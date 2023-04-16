@@ -1,5 +1,6 @@
 local M = {}
 
+--Get the full object and its type from its ID (NoteL type shouldnt be required, but simplifies and makes the code breath)
 M.objectFromID = function(id)
     local raw = vim.json.decode(require "notion".raw()).results
     for _, v in pairs(raw) do
@@ -85,6 +86,7 @@ M.displayShortDate = function(inputDate)
     end
 end
 
+--Returns the earliest event as a block
 M.earliest = function(opts)
     if opts == " " or opts == nil then return "Bug" end
     local content = (vim.json.decode(opts)).results
@@ -103,20 +105,7 @@ M.earliest = function(opts)
     return data
 end
 
-local function compareDates(v)
-    if v == nil then return end
-    if v.properties.Dates == nil or v.properties.Dates.date == vim.NIL or v.properties.Dates.date.start == nil then return true end
-    local str = v.properties.Dates.date.start
-    local ymd = string.sub(str, 1, 10)
-    local final = ymd:gsub("-", "")
-
-    if final >= vim.fn.strftime("%Y%m%d") then
-        return final
-    end
-    return false
-end
-
-
+--Get list of event - Only supports databse entries and pages
 M.eventList = function(opts)
     if opts == " " or opts == nil then return nil end
     local content = vim.json.decode(opts).results
@@ -146,6 +135,7 @@ M.eventPreview = function(data)
     local block = (M.objectFromID(id)).result
     local final = { "Name: " .. data.value.displayName, " " }
 
+    --Display every individual property block
     for i, v in pairs(block.properties) do
         if v.type == "date" then
             table.insert(final, i .. ": " .. M.displayDate(v.date.start))

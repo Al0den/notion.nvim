@@ -131,6 +131,7 @@ M.getChildren = function(id, callback)
     job:start()
 end
 
+--Save a page with the new information provided
 M.savePage = function(data, id)
     local file = io.open(storage, "r")
     if file == nil then return end
@@ -156,6 +157,7 @@ M.savePage = function(data, id)
     job:start()
 end
 
+--Save a page children's
 M.saveChildrens = function(data, id)
     local file = io.open(storage, "r")
     if file == nil then return end

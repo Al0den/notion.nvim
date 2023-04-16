@@ -3,14 +3,18 @@ local M = {}
 local status = false
 local curl = require "plenary.curl"
 
+--Saves the current key status for next neovim open
 local saveStatus = function()
     local path = vim.fn.stdpath("data") .. "/notion/prev.txt"
     local file = io.open(path, "w")
     if file == nil then return false end
-
-    file:write("true")
+    if status == true then
+        file:write("true")
+    end
+    file:close()
 end
 
+--Try a key synchronously
 local tryKey = function()
     local headers = {}
     local storageFile = vim.fn.stdpath("data") .. "/notion/data.txt"
@@ -37,6 +41,7 @@ local tryKey = function()
     saveStatus()
 end
 
+--When a key is not set/invalid
 local noKey = function()
     local newKey = vim.fn.input("Api key invalid/not set, insert new key:", "", "file")
     local storage = vim.fn.stdpath("data") .. "/notion/data.txt"
@@ -52,6 +57,7 @@ local noKey = function()
     end
 end
 
+--Function linked to NotionSetup
 local notionSetup = function()
     local storage = vim.fn.stdpath("data") .. "/notion/data.txt"
 
@@ -72,6 +78,7 @@ local notionSetup = function()
     end
 end
 
+--User accesible function
 M.initialisation = function()
     notionSetup()
     return status

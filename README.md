@@ -63,18 +63,17 @@ The default configuration is:
 
 ```lua
 require"notion".setup {
-    autoUpdate = true,
-    updateDelay = 60000,
-    open = "notion",
-    keys = {
-        deleteKey = "d",
+    autoUpdate = true, --Allow the plugin to automatically update 
+    updateDelay = 60000, --Delay between updates, only useful if autoUpdate true
+    open = "notion", --If not set, or set to something different to notion, will open in  web browser
+    keys = { --Menu keys
+        deleteKey = "d", 
         editKey = "e",
         openNotion = "o"
     },
-    notifications = true
+    notifications = true --Enable notifications
 }
 ```
-
 It can of course be overwritten. If you want to manually handle data update, `:NotionUpdate` or `require"notion".update({})`. Those commands aren't meant to return anything apart errors, you'll need to call `require"notion".raw()` to get the new data, after it has been updated (asynchronous)
 
 ## Customisation
@@ -93,7 +92,7 @@ require"notion.components".nextEventName()
 
 --Get next event date
 require"notion.components".nextEventDate() --In its full format
-require"notion.components".nextEventShortDate() --Matches by day to adapt displaystyle, used in `nextEvent()`
+require"notion.components".nextEventShortDate() --Matches by day to adapt string making it shorter, used in `nextEvent()`
 
 --Display all events menu
 require"notion".openMenu()

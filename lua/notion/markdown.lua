@@ -1,5 +1,6 @@
 local M = {}
 
+--Create the temporary markdown file with the given content
 local function createFile(text)
     local path = vim.fn.stdpath("data") .. "/notion/temp.md"
     local file = io.open(path, "w")
@@ -11,6 +12,7 @@ local function createFile(text)
     end)
 end
 
+--Transfom a page into markdown
 M.page = function(data, id)
     local ftext = " # Title: " .. data.properties.title.title[1].plain_text
     local buf = require "notion.window".create("Loading...")
@@ -77,6 +79,7 @@ M.page = function(data, id)
     require "notion.request".getChildren(id, onChild)
 end
 
+--Transform a databse entry into markdown
 M.databaseEntry = function(data, id)
     return vim.print("[Notion] No markdown for database entries as of right now")
 end

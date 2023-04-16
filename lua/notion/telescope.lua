@@ -54,6 +54,7 @@ local function attach_mappings(prompt_bufnr, map)
     return true
 end
 
+--Opens the notion menu
 M.openMenu = function(opts)
     opts = opts or {}
 

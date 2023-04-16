@@ -1,5 +1,6 @@
 local M = {}
 
+--Create a small notification window
 M.create = function(content)
     local bufnr = vim.api.nvim_create_buf(false, true)
     local width = 20
@@ -34,6 +35,7 @@ M.create = function(content)
     return winid
 end
 
+--Close a specific wndow
 M.close = function(winid)
     vim.api.nvim_win_close(winid, true)
 end
