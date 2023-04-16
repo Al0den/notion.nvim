@@ -147,18 +147,18 @@ M.eventPreview = function(data)
     local final = { "Name: " .. data.value.displayName, " " }
 
     for i, v in pairs(block.properties) do
-        if v.type == "select" and v.type.select ~= nil then
-            table.insert(final, v.type .. ": " .. v.select.name)
+        if v.type == "date" then
+            table.insert(final, i .. ": " .. M.displayDate(v.date.start))
+            table.insert(final, " ")
+        elseif v.type == "select" and v.select ~= nil then
+            table.insert(final, i .. ": " .. v.select.name)
             table.insert(final, " ")
         elseif v.type == "multi_select" then
             local temp = {}
             for _, j in pairs(v.multi_select) do
                 table.insert(temp, j.name)
             end
-            table.insert(final, v.type .. ": " .. table.concat(temp, ", "))
-            table.insert(final, " ")
-        elseif v.type == "date" then
-            table.insert(final, v.type .. ": " .. M.displayDate(v.date.start))
+            table.insert(final, i .. ": " .. table.concat(temp, ", "))
             table.insert(final, " ")
         end
     end

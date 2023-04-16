@@ -11,7 +11,7 @@ local notion = require "notion"
 
 local M = {}
 
---Function linked to "deleteKey"
+--Function linked to "deleteKey", deletes the item from notion and calls update silently
 local deleteItem = function(prompt_bufnr)
     local selection = action_state.get_selected_entry()
     actions.close(prompt_bufnr)
@@ -21,7 +21,7 @@ local deleteItem = function(prompt_bufnr)
     notion.update({ silent = true, window = nil })
 end
 
---Function linked to "editKey", as of right now only opens up notion
+--Function linked to edit key, opens a markdown file with content if possible
 local editItem = function(prompt_bufnr)
     local selection = action_state.get_selected_entry()
     actions.close(prompt_bufnr)
@@ -34,17 +34,19 @@ end
 
 --Executed when an option is "hovered" inside the menu
 local function attach_mappings(prompt_bufnr, map)
-    --On menu, open notion
+    --On menu click
     actions.select_default:replace(function()
         actions.close(prompt_bufnr)
         local selection = action_state.get_selected_entry()
         local obj = (parser.objectFromID(selection.value.id)).result
+
         if notion.opts.open == "notion" then
             os.execute("open notion://" .. obj.url)
         else
             os.execute("open " .. obj.url)
         end
     end)
+
     map("n", notion.opts.keys.deleteKey, deleteItem)
     map("n", notion.opts.keys.editKey, editItem)
     map("n", notion.opts.keys.openNotion, openNotion)
