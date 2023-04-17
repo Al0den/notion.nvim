@@ -81,7 +81,21 @@ end
 
 --Transform a databse entry into markdown
 M.databaseEntry = function(data, id)
-    return vim.print("[Notion] No markdown for database entries as of right now")
+    local ftext = "<notion>id:" .. data.id .. "\n" .. "<notion>parent:" .. data.parent.database_id .. "\n"
+    for i, v in pairs(data.properties) do
+        if v.type == "title" then
+            ftext = ftext .. "\n**" .. i .. "**: " .. v.title[1].plain_text
+        elseif v.type == "select" and v.select ~= nil then
+            ftext = ftext .. "\n**" .. i .. "**: " .. v.select.name
+        elseif v.type == "multi_select" then
+            local temp = {}
+            for _, j in pairs(v.multi_select) do
+                table.insert(temp, j.name)
+            end
+            ftext = ftext .. "\n**" .. i .. "**: " .. table.concat(temp, ", ")
+        end
+    end
+    createFile(ftext)
 end
 
 return M
