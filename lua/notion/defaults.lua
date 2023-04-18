@@ -6,7 +6,8 @@ M.open = "notion"
 M.keys = {
     deleteKey = "d",
     openNotion = "o",
-    editKey = "e"
+    editKey = "e",
+    itemAdd = "a"
 }
 M.notification = true
 

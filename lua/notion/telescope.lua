@@ -28,6 +28,10 @@ local editItem = function(prompt_bufnr)
     parser.notionToMarkdown(selection)
 end
 
+--Function linked to itemAdd key
+local addItem = function(prompt_bufnr)
+    vim.print("Not yet implemented")
+end
 local openNotion = function(prompt_bufnr)
     os.execute("open notion://www.notion.so")
 end
@@ -50,6 +54,7 @@ local function attach_mappings(prompt_bufnr, map)
     map("n", notion.opts.keys.deleteKey, deleteItem)
     map("n", notion.opts.keys.editKey, editItem)
     map("n", notion.opts.keys.openNotion, openNotion)
+    map("n", notion.opts.keys.itemAdd, addItem)
 
     return true
 end

@@ -43,7 +43,6 @@ As an example, to insert the next event inside your lualine something, you could
 
 ```lua
 --lualine.lua
-
 require'lualine'.setup {
     ...
     sections = {
@@ -69,7 +68,8 @@ require"notion".setup {
     keys = { --Menu keys
         deleteKey = "d", 
         editKey = "e",
-        openNotion = "o"
+        openNotion = "o",
+        itemAdd = "a"
     },
     notifications = true --Enable notifications
 }
@@ -98,9 +98,14 @@ require"notion.components".nextEventShortDate() --Matches by day to adapt string
 require"notion".openMenu()
 ```
 
+Inside the `menu`, different functions are accesible through the default keys. As of right now, editKey will open, if possible, a markdown file containing all the data of the event/page. As of right now, saving the file doesnt push to the API, but this is a work in progress.
+
+Pressing deleteKey when hovering over an event will delete an item from Notion. Note that once deleted, it will try to update the saved data straight away, but re-opening the menu fast may still show the event
+
 ## Roadmap
 
-- Extend available functions list
+- Add addItem key
+- Add support for updating notion pages / database entries
 - Add reminder notifications
 - Add support for nvim-notify (Not in the near future)
 - Improve deleting as to force deleting in saved data rather than force api update (Not in the near future)
