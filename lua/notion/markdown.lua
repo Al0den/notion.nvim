@@ -86,12 +86,15 @@ M.page = function(data, id)
             local numbered_list_counter = 0
             local prevBlock = nil
             for _, block in ipairs(blocks) do
+                if (prevBlock == "bulleted_list_item" and block.type ~= "bulleted_list_item") or (prevBlock == "numbered_list_item" and block.type ~= "numbered_list_item") then
+                    markdown = markdown .. "\n"
+                end
                 if block.type == "heading_1" then
                     markdown = markdown .. "# " .. parseRichText(block.heading_1.rich_text) .. "\n\n"
-                    prevBlock = nil
+                    prevBlock = block.type
                 elseif block.type == "heading_2" then
                     markdown = markdown .. "## " .. parseRichText(block.heading_2.rich_text) .. "\n\n"
-                    prevBlock = nil
+                    prevBlock = block.type
                 elseif block.type == "heading_3" then
                     markdown = markdown .. "### " .. parseRichText(block.heading_3.rich_text) .. "\n\n"
                     prevBlock = nil
@@ -99,8 +102,8 @@ M.page = function(data, id)
                     markdown = markdown .. parseRichText(block.paragraph.rich_text) .. "\n\n"
                     prevBlock = nil
                 elseif block.type == "bulleted_list_item" then
-                    markdown = markdown .. "- " .. parseRichText(block.bulleted_list_item.rich_text) .. "\n\n"
-                    prevBlock = nil
+                    markdown = markdown .. "- " .. parseRichText(block.bulleted_list_item.rich_text) .. "\n"
+                    prevBlock = block.type
                 elseif block.type == "numbered_list_item" then
                     vim.print(prevBlock)
                     if prevBlock == "numbered_list_item" then
@@ -109,8 +112,8 @@ M.page = function(data, id)
                         numbered_list_counter = 1
                     end
                     markdown = markdown ..
-                    numbered_list_counter .. ". " .. parseRichText(block.numbered_list_item.rich_text) .. "\n\n"
-                    prevBlock = "numbered_list_item"
+                        numbered_list_counter .. ". " .. parseRichText(block.numbered_list_item.rich_text) .. "\n"
+                    prevBlock = block.type
                 elseif block.type == "toggle" then
                     markdown = markdown ..
                         "<details><summary>" .. parseRichText(block.toggle.rich_text) .. "</summary>\n"
