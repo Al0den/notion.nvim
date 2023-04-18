@@ -1,8 +1,6 @@
 local storage = vim.fn.stdpath("data") .. "/notion/data.txt"
 local Job = require('plenary.job')
 
-local parser = require "notion.parse"
-
 local M = {}
 
 --Makes an asynchronous request to the Notion API, and calls the `callback` with the output
@@ -150,6 +148,8 @@ M.savePage = function(data, id)
         on_exit = function(b, code)
             if code == 0 then
                 vim.print("[Notion] Page updated successfully")
+            else
+                vim.print("[Notion] Failed with code " .. code)
             end
         end
     })
@@ -176,6 +176,8 @@ M.saveChildrens = function(data, id)
         on_exit = function(b, code)
             if code == 0 then
                 vim.print("[Notion] Childrens updated successfully")
+            else
+                vim.print("[Notion] Failed with code " .. code)
             end
         end
     })

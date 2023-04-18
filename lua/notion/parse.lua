@@ -150,6 +150,18 @@ M.eventPreview = function(data)
             end
             table.insert(final, i .. ": " .. table.concat(temp, ", "))
             table.insert(final, " ")
+        elseif v.type == "number" and v.number ~= vim.NIL then
+            table.insert(final, i .. ": " .. v.number)
+            table.insert(final, " ")
+        elseif v.type == "email" and v.email ~= vim.NIL then
+            table.insert(final, i .. ": " .. v.email)
+            table.insert(final, " ")
+        elseif v.type == "url" and v.url ~= vim.NIL then
+            table.insert(final, i .. ": " .. v.url)
+            table.insert(final, " ")
+        elseif v.type == "people" and v.people[1] ~= nil then
+            table.insert(final, i .. ": " .. v.people[1].name)
+            table.insert(final, " ")
         end
     end
 

@@ -1,5 +1,33 @@
 local M = {}
 
+local function onSave()
+    local f = io.open(vim.fn.stdpath("data") .. "/notion/tempData.txt", "r")
+    if f == nil then return end
+    local prev = vim.json.decode(f:read("*a"))
+    f:close()
+    local f = io.open(vim.fn.stdpath("data") .. "/notion/temp.md", "r")
+    if f == nil then return end
+    local new = f:read("*a")
+    local result = {}
+    local pattern = "%*%*(.-)%*%*:%s*(.-)\n"
+    for key, value in string.gmatch(new, pattern) do
+        result[key] = value -- Add the key-value pair to the result table
+    end
+    for i, v in pairs(result) do
+        if prev.properties[i] ~= nil then
+            if prev.properties[i].type == "title" then
+                prev.properties[i].title[1].plain_text = v
+                prev.properties[i].title[1].text.content = v
+            elseif prev.properties[i].type == "select" then
+                prev.properties[i].select.name = v
+            end
+        end
+    end
+    local payload = '{"properties": ' .. vim.json.encode(prev.properties) .. "}"
+    vim.print(payload)
+    require "notion.request".savePage(payload, prev.id)
+end
+
 --Create the temporary markdown file with the given content
 local function createFile(text)
     local path = vim.fn.stdpath("data") .. "/notion/temp.md"
@@ -9,6 +37,10 @@ local function createFile(text)
     file:close()
     vim.schedule(function()
         vim.cmd("vsplit " .. path)
+        vim.api.nvim_create_autocmd("BufWritePost", {
+            callback = onSave,
+            buffer = 0
+        })
     end)
 end
 
@@ -81,9 +113,13 @@ end
 
 --Transform a databse entry into markdown
 M.databaseEntry = function(data, id)
-    local ftext = "<notion>id:" .. data.id .. "\n" .. "<notion>parent:" .. data.parent.database_id .. "\n"
+    local f = io.open(vim.fn.stdpath("data") .. "/notion/tempData.txt", "w")
+    if f == nil then return end
+    f:write(vim.json.encode(data))
+    f:close()
+    local ftext = ""
     for i, v in pairs(data.properties) do
-        if v.type == "title" then
+        if v.type == "title" and v.title[1] ~= vim.NIL then
             ftext = ftext .. "\n**" .. i .. "**: " .. v.title[1].plain_text
         elseif v.type == "select" and v.select ~= nil then
             ftext = ftext .. "\n**" .. i .. "**: " .. v.select.name
@@ -92,7 +128,15 @@ M.databaseEntry = function(data, id)
             for _, j in pairs(v.multi_select) do
                 table.insert(temp, j.name)
             end
-            ftext = ftext .. "\n**" .. i .. "**: " .. table.concat(temp, ", ")
+            ftext = ftext .. "\n**" .. i .. "**: " .. table.concat(temp, ", ") .. "\n"
+        elseif v.type == "number" and v.number ~= vim.NIL then
+            ftext = ftext .. "\n**" .. i .. "**: " .. v.number
+        elseif v.type == "email" and v.email ~= vim.NIL then
+            ftext = ftext .. "\n**" .. i .. "**: " .. v.email
+        elseif v.type == "url" and v.url ~= vim.NIL then
+            ftext = ftext .. "\n**" .. i .. "**: " .. v.url
+        elseif v.type == "people" and v.people[1] ~= nil then
+            ftext = ftext .. "\n**" .. i .. "**: " .. v.people[1].name
         end
     end
     createFile(ftext)

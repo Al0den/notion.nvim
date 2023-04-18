@@ -79,7 +79,8 @@ local function initialiseFiles()
     os.execute("touch " .. path .. "data.txt")
     os.execute("touch " .. path .. "prev.txt")
     os.execute("touch " .. path .. "saved.txt")
-    os.execute("touch " .. path .. "notion-temp.md")
+    os.execute("touch " .. path .. "temp.md")
+    os.execute("touch " .. path .. "tempData.txt")
 end
 
 --Self explanatory
