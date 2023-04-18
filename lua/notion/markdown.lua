@@ -83,23 +83,38 @@ M.page = function(data, id)
 
         local function parseBlocks(blocks)
             local markdown = ""
+            local numbered_list_counter = 0
+            local prevBlock = nil
             for _, block in ipairs(blocks) do
                 if block.type == "heading_1" then
-                    markdown = markdown .. "# " .. parseRichText(block.heading_1.rich_text) .. "\n"
+                    markdown = markdown .. "# " .. parseRichText(block.heading_1.rich_text) .. "\n\n"
+                    prevBlock = nil
                 elseif block.type == "heading_2" then
-                    markdown = markdown .. "## " .. parseRichText(block.heading_2.rich_text) .. "\n"
+                    markdown = markdown .. "## " .. parseRichText(block.heading_2.rich_text) .. "\n\n"
+                    prevBlock = nil
                 elseif block.type == "heading_3" then
-                    markdown = markdown .. "### " .. parseRichText(block.heading_3.rich_text) .. "\n"
+                    markdown = markdown .. "### " .. parseRichText(block.heading_3.rich_text) .. "\n\n"
+                    prevBlock = nil
                 elseif block.type == "paragraph" then
-                    markdown = markdown .. parseRichText(block.paragraph.rich_text) .. "\n"
+                    markdown = markdown .. parseRichText(block.paragraph.rich_text) .. "\n\n"
+                    prevBlock = nil
                 elseif block.type == "bulleted_list_item" then
-                    markdown = markdown .. "- " .. parseRichText(block.bulleted_list_item.rich_text) .. "\n"
+                    markdown = markdown .. "- " .. parseRichText(block.bulleted_list_item.rich_text) .. "\n\n"
+                    prevBlock = nil
                 elseif block.type == "numbered_list_item" then
-                    markdown = markdown .. "1. " .. parseRichText(block.numbered_list_item.rich_text) .. "\n"
+                    vim.print(prevBlock)
+                    if prevBlock == "numbered_list_item" then
+                        numbered_list_counter = numbered_list_counter + 1
+                    else
+                        numbered_list_counter = 1
+                    end
+                    markdown = markdown ..
+                    numbered_list_counter .. ". " .. parseRichText(block.numbered_list_item.rich_text) .. "\n\n"
+                    prevBlock = "numbered_list_item"
                 elseif block.type == "toggle" then
                     markdown = markdown ..
                         "<details><summary>" .. parseRichText(block.toggle.rich_text) .. "</summary>\n"
-                    markdown = markdown .. parseBlocks(block.toggle.children) .. "</details>\n"
+                    markdown = markdown .. parseBlocks(block.toggle.children) .. "</details>\n\n"
                 end
             end
             return markdown
@@ -128,7 +143,7 @@ M.databaseEntry = function(data, id)
             for _, j in pairs(v.multi_select) do
                 table.insert(temp, j.name)
             end
-            ftext = ftext .. "\n**" .. i .. "**: " .. table.concat(temp, ", ") .. "\n"
+            ftext = ftext .. "\n**" .. i .. "**: " .. table.concat(temp, ", ")
         elseif v.type == "number" and v.number ~= vim.NIL then
             ftext = ftext .. "\n**" .. i .. "**: " .. v.number
         elseif v.type == "email" and v.email ~= vim.NIL then
