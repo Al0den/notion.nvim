@@ -84,7 +84,6 @@ require"notion".setup {
     notifications = true --Enable notifications
 }
 ```
-It can of course be overwritten. If you want to manually handle data update, `:NotionUpdate` or `require"notion".update({})`. Those commands aren't meant to return anything apart errors, you'll need to call `require"notion".raw()` to get the new data, after it has been updated (asynchronous)
 
 ## Customisation
 
@@ -117,6 +116,21 @@ In it's current state, two things can happen when calling the editKey:
 Currently not caching or auto-updating page childrens as to not overwhelm the API, as a new API call would anyways be needed on key press to get the latest information
 
 Pressing deleteKey when hovering over an event will delete an item from Notion. Note that once deleted, it will try to update the saved data straight away, but re-opening the menu fast may still show the event
+
+### Updates
+
+If you want to manually update the data stored, you can use `require"notion".update` function, used as such:
+```lua
+require"notion".update({
+    silent = false,
+    window = nil
+})
+```
+silent determines wether to show a notification or not. Does not override the default `notifications`, so if set to false, no window will be showed, otherwise depends on `notifications`
+
+If you want to manually handle your notifications, `window` takes a window ID as an argument and will close said window when the action has completed
+
+Note: `update` is asynchronous, and as such the data will take a bit of time to update (<1 s usually), and `menu` will update accordingly  
 
 ## Roadmap
 
