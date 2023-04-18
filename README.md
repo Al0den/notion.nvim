@@ -2,6 +2,11 @@
 
 Access your neovim events from inside of neovim, and access the wrapper behind it
 
+## Screenshots
+
+![image](https://user-images.githubusercontent.com/111601320/232697205-df41c239-bdd0-40e7-800c-3a9bb9f5bf06.jpeg)
+![image](https://user-images.githubusercontent.com/111601320/232698339-f38b8eca-5211-4288-9a68-f1b6c7d2cd0b.jpeg)
+
 ## Installation and setup
 
 Any plugin manager should do the trick. Calling the setup function is required if you want to access the plugin
