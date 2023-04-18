@@ -29,7 +29,7 @@ M.request = function(callback, window)
             if code == 0 then
                 callback(b._stdout_results[1])
             else
-                vim.print("[Notion] Error calling API")
+                vim.print("[Notion] Error calling API, code: " .. code)
             end
             if window ~= nil then
                 vim.schedule(function()
@@ -58,7 +58,7 @@ M.resolveDatabase = function(id, callback)
             if code == 0 then
                 callback(b._stdout_results[1])
             else
-                vim.print("[Notion] Error calling API")
+                vim.print("[Notion] Error calling API, code: " .. code)
             end
         end,
     })
@@ -85,7 +85,7 @@ M.deleteItem = function(id, window)
                     require "notion.window".close(window)
                 end)
             else
-                print("[Notion] Error calling API")
+                print("[Notion] Error calling API, code: " .. code)
             end
         end,
     })
@@ -109,7 +109,7 @@ M.getChildren = function(id, callback)
             if code == 0 then
                 callback(b._stdout_results[1])
             else
-                vim.print("[Notion] Error calling api")
+                vim.print("[Notion] Error calling api, code: " .. code)
             end
         end
     })

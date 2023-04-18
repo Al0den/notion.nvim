@@ -11,7 +11,7 @@ M.objectFromID = function(id)
             }
         end
     end
-    return "Problem"
+    return vim.err_writeln("[Notion] Cannot find object with id: " .. id)
 end
 
 --Converts notion objects to markdown
@@ -88,7 +88,7 @@ end
 
 --Returns the earliest event as a block
 M.earliest = function(opts)
-    if opts == " " or opts == nil then return "Bug" end
+    if opts == " " or opts == nil then return vim.err_writeln("[Notion] Unexpected argument") end
     local content = (vim.json.decode(opts)).results
     local biggestDate = " "
     local data
