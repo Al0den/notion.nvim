@@ -100,6 +100,12 @@ require"notion".openMenu()
 
 Inside the `menu`, different functions are accesible through the default keys. As of right now, editKey will open, if possible, a markdown file containing all the data of the event/page. As of right now, saving the file doesnt push to the API, but this is a work in progress.
 
+In it's current state, two things can happen when calling the editKey:
+- Hovering a database entry, will create the file instantaneously
+- Hovering a page, will take a bit of time to fetch the different page blocks
+
+Currently not caching or auto-updating page childrens as to not overwhelm the API, as a new API call would anyways be needed on key press to get the latest information
+
 Pressing deleteKey when hovering over an event will delete an item from Notion. Note that once deleted, it will try to update the saved data straight away, but re-opening the menu fast may still show the event
 
 ## Roadmap

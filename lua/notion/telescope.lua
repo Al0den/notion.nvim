@@ -85,7 +85,7 @@ M.openMenu = function(opts)
         sorter = conf.generic_sorter(opts),
         attach_mappings = attach_mappings,
         previewer = previewers.new_buffer_previewer {
-            title = "Information",
+            title = "Preview",
             define_preview = function(self, entry, status)
                 vim.api.nvim_buf_set_lines(self.state.bufnr, 0, -1, false, parser.eventPreview(entry))
             end
