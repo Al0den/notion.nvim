@@ -1,6 +1,8 @@
 # notion.nvim
 
-Access your neovim events from inside of neovim, and access the wrapper behind it
+`notion.nvim` is a [Neovim](https://neovim.io) plugin made for accesing the [Notion](https://notion.so) API, formatting and ease of integration.
+
+Currently, their is no way to add or modify notion pages, but will be added in the future
 
 ## Screenshots
 
@@ -123,3 +125,7 @@ Pressing deleteKey when hovering over an event will delete an item from Notion. 
 - Add reminder notifications
 - Add support for nvim-notify (Not in the near future)
 - Improve deleting as to force deleting in saved data rather than force api update (Not in the near future)
+
+## Credits
+
+[impulse.nvim](https://github.com/chrsm/impulse.nvim), Similar results, but not maintained, buggy in certain aspects and impossible for me to recode due to yue/moonscript
