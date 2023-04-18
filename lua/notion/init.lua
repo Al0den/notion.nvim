@@ -5,6 +5,20 @@ local initialized = false
 local defaults = require "notion.defaults"
 local req = require "notion.request"
 
+M.readFile = function(filename)
+    local f = assert(io.open(filename, "r"))
+    local content = f:read("*a")
+    f:close()
+    return content
+end
+
+M.writeFile = function(filename, content)
+    local f = assert(io.open(filename, "w"))
+    f:write(content)
+    f:close()
+    return
+end
+
 --Access init status from other files
 M.checkInit = function()
     if not initialized then
@@ -16,12 +30,7 @@ end
 
 --Save status for next neovim log in
 local prevStatus = function()
-    local path = vim.fn.stdpath("data") .. "/notion/prev.txt"
-    local file = io.open(path, "r")
-    if file == nil then return false end
-    local l = file:read("*a")
-
-    if l == "true" then
+    if M.readFile(vim.fn.stdpath("data") .. "/notion/prev.txt") == "true" then
         initialized = true
     end
 end
@@ -29,12 +38,7 @@ end
 --Returns the raw output of the api, as a string
 M.raw = function()
     if not M.checkInit() then return end
-    local path = vim.fn.stdpath("data") .. "/notion/saved.txt"
-    local file = io.open(path, "r")
-    if file == nil then return end
-    local l = file:read("*a")
-    file:close()
-    return l
+    return M.readFile(vim.fn.stdpath("data") .. "/notion/saved.txt")
 end
 
 --Updates the saved data
@@ -56,20 +60,12 @@ M.update = function(opts)
     end
 
     local saveData = function(data)
-        local path = vim.fn.stdpath("data") .. "/notion/saved.txt"
-        local file = io.open(path, "w")
-        if file == nil then return vim.print("[Notion] Incorrect Setup") end
-        file:write(data)
-        file:close()
+        M.writeFile(vim.fn.stdpath("data") .. "/notion/saved.txt", data) --Save data
     end
 
     req.request(function(data) saveData(data) end, window)
 
-    local path = vim.fn.stdpath("data") .. "/notion/prev.txt"
-    local file = io.open(path, "w")
-    if file == nil then return false end
-    file:write("true")
-    file:close()
+    M.writeFile(vim.fn.stdpath("data") .. "prev.txt", "true") --Save status
 end
 
 --Make sure all files are created (Probably a better way to do this?)

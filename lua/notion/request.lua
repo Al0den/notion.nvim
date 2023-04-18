@@ -5,10 +5,7 @@ local M = {}
 
 --Makes an asynchronous request to the Notion API, and calls the `callback` with the output
 M.request = function(callback, window)
-    local file = io.open(storage, "r")
-    if file == nil then return end
-
-    local l = file:read("*a")
+    local l = require "notion".readFile(storage)
 
     local data = {
         sort = {
@@ -47,9 +44,7 @@ end
 
 --Get database object from its ID
 M.resolveDatabase = function(id, callback)
-    local file = io.open(storage, "r")
-    if file == nil then return end
-    local l = file:read("*a")
+    local l = require "notion".readFile(storage)
 
     local job = Job:new({
         command = 'curl',
@@ -73,12 +68,7 @@ end
 
 --Delete item from Notion
 M.deleteItem = function(id, window)
-    local file = io.open(storage, "r")
-
-    if file == nil then return end
-
-    local l = file:read("*a")
-
+    local l = require "notion".readFile(storage)
 
     local job = Job:new({
         command = 'curl',
@@ -105,9 +95,7 @@ end
 
 --Get childrens of particular block ID
 M.getChildren = function(id, callback)
-    local file = io.open(storage, "r")
-    if file == nil then return end
-    local l = file:read("*a")
+    local l = require "notion".readFile(storage)
 
     local job = Job:new({
         command = 'curl',
@@ -131,9 +119,7 @@ end
 
 --Save a page with the new information provided
 M.savePage = function(data, id)
-    local file = io.open(storage, "r")
-    if file == nil then return end
-    local l = file:read("*a")
+    local l = require "notion".readFile(storage)
 
     local job = Job:new({
         command = 'curl',
@@ -159,9 +145,7 @@ end
 
 --Save a page children's
 M.saveChildrens = function(data, id)
-    local file = io.open(storage, "r")
-    if file == nil then return end
-    local l = file:read("*a")
+    local l = require "notion".readFile(storage)
 
     local job = Job:new({
         command = 'curl',

@@ -5,25 +5,16 @@ local curl = require "plenary.curl"
 
 --Saves the current key status for next neovim open
 local saveStatus = function()
-    local path = vim.fn.stdpath("data") .. "/notion/prev.txt"
-    local file = io.open(path, "w")
-    if file == nil then return false end
     if status == true then
-        file:write("true")
+        require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/prev.txt", "true")
     end
-    file:close()
 end
 
 --Try a key synchronously
 local tryKey = function()
+    local l = require "notion".readFile(vim.fn.stdpath("data") .. "/notion/data.txt")
+
     local headers = {}
-    local storageFile = vim.fn.stdpath("data") .. "/notion/data.txt"
-    local file = io.open(storageFile, "r")
-
-    if file == nil then return true end
-
-    local l = file:read("*a")
-
     headers["Content-Type"] = "application/json"
     headers["Notion-Version"] = "2021-05-13"
     headers["Authorization"] = "Bearer " .. l
@@ -44,37 +35,20 @@ end
 --When a key is not set/invalid
 local noKey = function()
     local newKey = vim.fn.input("Api key invalid/not set, insert new key:", "", "file")
-    local storage = vim.fn.stdpath("data") .. "/notion/data.txt"
-    local file = io.open(storage, "w")
-    if file == nil then
-        return vim.print("[Notion] Incorrect Configuration")
-    else
-        file:write(newKey)
-        file:close()
-        if tryKey() then
-            return vim.print("[Notion] Invalid key, please try again")
-        end
+    require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/data.txt", newKey)
+    if tryKey() then
+        return vim.print("[Notion] Invalid key, please try again")
     end
 end
 
 --Function linked to NotionSetup
 local notionSetup = function()
-    local storage = vim.fn.stdpath("data") .. "/notion/data.txt"
+    local l = require "notion".readFile(vim.fn.stdpath("data") .. "/notion/data.txt")
 
-    local file = io.open(storage, "r")
-    local l = {}
-
-    if file == nil then
-        print("[Notion] Please report bug")
+    if l == " " or l == "" or l == "\n" then
+        noKey()
     else
-        l = file:read("*a")
-        file:close()
-        if l == " " or l == "" or l == "\n" then
-            print(l)
-            noKey()
-        else
-            if tryKey() then noKey() end
-        end
+        if tryKey() then noKey() end
     end
 end
 

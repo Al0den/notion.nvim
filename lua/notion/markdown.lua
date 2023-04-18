@@ -1,40 +1,22 @@
 local M = {}
 
+local type
+
 local function onSave()
-    local f = io.open(vim.fn.stdpath("data") .. "/notion/tempData.txt", "r")
-    if f == nil then return end
-    local prev = vim.json.decode(f:read("*a"))
-    f:close()
-    local f = io.open(vim.fn.stdpath("data") .. "/notion/temp.md", "r")
-    if f == nil then return end
-    local new = f:read("*a")
-    local result = {}
-    local pattern = "%*%*(.-)%*%*:%s*(.-)\n"
-    for key, value in string.gmatch(new, pattern) do
-        result[key] = value -- Add the key-value pair to the result table
+    local prev = vim.json.decode(require "notion".readFile(vim.fn.stdpath("data") .. "/notion/tempData.txt"))
+    local new = require "notion".readFile(vim.fn.stdpath("data") .. "/notion/temp.md")
+
+    if type == "page" then
+        vim.print("WIP")
+    elseif type == "databaseEntry" then
+        vim.print("WIP")
     end
-    for i, v in pairs(result) do
-        if prev.properties[i] ~= nil then
-            if prev.properties[i].type == "title" then
-                prev.properties[i].title[1].plain_text = v
-                prev.properties[i].title[1].text.content = v
-            elseif prev.properties[i].type == "select" then
-                prev.properties[i].select.name = v
-            end
-        end
-    end
-    local payload = '{"properties": ' .. vim.json.encode(prev.properties) .. "}"
-    vim.print(payload)
-    require "notion.request".savePage(payload, prev.id)
 end
 
 --Create the temporary markdown file with the given content
 local function createFile(text)
     local path = vim.fn.stdpath("data") .. "/notion/temp.md"
-    local file = io.open(path, "w")
-    if file == nil then return end
-    file:write(text)
-    file:close()
+    require "notion".writeFile(path, text)
     vim.schedule(function()
         vim.cmd("vsplit " .. path)
         vim.api.nvim_create_autocmd("BufWritePost", {
@@ -83,7 +65,7 @@ M.page = function(data, id)
 
         local function parseBlocks(blocks)
             local markdown = ""
-            local numbered_list_counter = 0
+            local numbered_list_counter = 1
             local prevBlock = nil
             for _, block in ipairs(blocks) do
                 if (prevBlock == "bulleted_list_item" and block.type ~= "bulleted_list_item") or (prevBlock == "numbered_list_item" and block.type ~= "numbered_list_item") then
@@ -105,7 +87,6 @@ M.page = function(data, id)
                     markdown = markdown .. "- " .. parseRichText(block.bulleted_list_item.rich_text) .. "\n"
                     prevBlock = block.type
                 elseif block.type == "numbered_list_item" then
-                    vim.print(prevBlock)
                     if prevBlock == "numbered_list_item" then
                         numbered_list_counter = numbered_list_counter + 1
                     else
@@ -124,6 +105,7 @@ M.page = function(data, id)
         end
 
         local markdown = parseBlocks(response)
+        type = "page"
         createFile(ftext .. "\n\n" .. markdown)
     end
     require "notion.request".getChildren(id, onChild)
@@ -131,10 +113,7 @@ end
 
 --Transform a databse entry into markdown
 M.databaseEntry = function(data, id)
-    local f = io.open(vim.fn.stdpath("data") .. "/notion/tempData.txt", "w")
-    if f == nil then return end
-    f:write(vim.json.encode(data))
-    f:close()
+    require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/tempData.txt", vim.json.encode(data))
     local ftext = ""
     for i, v in pairs(data.properties) do
         if v.type == "title" and v.title[1] ~= vim.NIL then
@@ -157,6 +136,7 @@ M.databaseEntry = function(data, id)
             ftext = ftext .. "\n**" .. i .. "**: " .. v.people[1].name
         end
     end
+    type = "databaseEntry"
     createFile(ftext)
 end
 
