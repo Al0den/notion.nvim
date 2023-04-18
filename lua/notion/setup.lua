@@ -26,10 +26,10 @@ local tryKey = function()
     })
 
     if res.status == 401 then return true end
-    require "notion".saveData(res.body)
     vim.print("[Notion] Status: Operational")
     status = true
     saveStatus()
+    require "notion".update({ silent = false })
 end
 
 --When a key is not set/invalid
