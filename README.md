@@ -126,7 +126,7 @@ require"notion".update({
     window = nil
 })
 ```
-silent determines wether to show a notification or not. Does not override the default `notifications`, so if set to false, no window will be showed, otherwise depends on `notifications`
+`silent` determines wether to show a notification or not. Does not override the default `notifications`, so if set to false, no window will be showed, otherwise depends on `notifications`
 
 If you want to manually handle your notifications, `window` takes a window ID as an argument and will close said window when the action has completed
 
