@@ -42,6 +42,10 @@ END
 
 By default, the plugin simply wont do anything. Call the `:NotionSetup` function to initialise the plugin and enable it's features. 
 
+You will need your [Notion integration key](https://developers.notion.com), and have setup the integration to access the specific pages/databases you want to display inside of Neovim.
+
+If your environment variable `NOTION_API_KEY` is already set, simply running `:NotionSetup` while initialise the plugin once and for all
+
 The simplest of use is the `Notion` (`require"notion".openMenu()`), which opens a menu will all upcomings events. However, a lot of functions are exposed through the `notions.components` file.
 
 ```lua

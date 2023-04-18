@@ -13,7 +13,6 @@ end
 --Try a key synchronously
 local tryKey = function()
     local l = require "notion".readFile(vim.fn.stdpath("data") .. "/notion/data.txt")
-
     local headers = {}
     headers["Content-Type"] = "application/json"
     headers["Notion-Version"] = "2021-05-13"
@@ -29,7 +28,9 @@ local tryKey = function()
     vim.print("[Notion] Status: Operational")
     status = true
     saveStatus()
-    require "notion".update({ silent = false })
+    vim.schedule(function()
+        require "notion".update({ silent = false })
+    end)
 end
 
 --When a key is not set/invalid
@@ -43,10 +44,14 @@ end
 
 --Function linked to NotionSetup
 local notionSetup = function()
-    local l = require "notion".readFile(vim.fn.stdpath("data") .. "/notion/data.txt")
-
-    if l == " " or l == "" or l == "\n" then
-        noKey()
+    local content = require "notion".readFile(vim.fn.stdpath("data") .. "/notion/data.txt")
+    if content == nil or content == "" or content == " " then
+        if os.getenv("NOTION_API_KEY") ~= nil then
+            require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/data.txt", os.getenv("NOTION_API_KEY"))
+            if tryKey() then noKey() end
+        else
+            noKey()
+        end
     else
         if tryKey() then noKey() end
     end
