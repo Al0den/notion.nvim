@@ -128,4 +128,6 @@ Pressing deleteKey when hovering over an event will delete an item from Notion. 
 
 ## Credits
 
-[impulse.nvim](https://github.com/chrsm/impulse.nvim), Similar results, but not maintained, buggy in certain aspects and impossible for me to recode due to yue/moonscript
+- [impulse.nvim](https://github.com/chrsm/impulse.nvim), Similar results, but not maintained, buggy in certain aspects and impossible for me to recode due to yue/moonscript
+- [plenary.nvim](https://github.com/nvim-lua/plenary.nvim), Use of jobs for asynchronous updates
+- [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim), Use of pickers
