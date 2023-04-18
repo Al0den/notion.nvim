@@ -10,7 +10,7 @@ Currently, their is no way to add or modify notion pages, but will be added in t
 ![image](https://user-images.githubusercontent.com/111601320/232697205-df41c239-bdd0-40e7-800c-3a9bb9f5bf06.jpeg)
 
 ### Markdown 
-![image](https://user-images.githubusercontent.com/111601320/232713008-5519cace-a192-4be3-9cc8-48cd35bc85f0.jpeg)
+![image](https://user-images.githubusercontent.com/111601320/232716446-96a696b3-9df4-4b4f-848f-ee76c15af61b.jpeg)
 
 ## Installation and setup
 
