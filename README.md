@@ -3,9 +3,11 @@
 Access your neovim events from inside of neovim, and access the wrapper behind it
 
 ## Screenshots
-![image](https://user-images.githubusercontent.com/111601320/232698561-f3a5b535-fd87-44dd-8459-919852b9f95c.jpeg)
 
+### Menu
 ![image](https://user-images.githubusercontent.com/111601320/232697205-df41c239-bdd0-40e7-800c-3a9bb9f5bf06.jpeg)
+
+### Markdown 
 ![image](https://user-images.githubusercontent.com/111601320/232698339-f38b8eca-5211-4288-9a68-f1b6c7d2cd0b.jpeg)
 
 ## Installation and setup
