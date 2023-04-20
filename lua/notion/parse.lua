@@ -19,11 +19,11 @@ M.notionToMarkdown = function(selection)
     local data = M.objectFromID(selection.value.id)
     local markdownParser = require "notion.markdown"
     if data.object == "database_id" then
-        return markdownParser.databaseEntry(data.result, selection.value.id)
+        return markdownParser.databaseEntry(data.result, selection.value.id, false)
     elseif data.object == "page_id" then
-        return markdownParser.page(data.result, selection.value.id)
+        return markdownParser.page(data.result, selection.value.id, false)
     else
-        return vim.print("[Notion] Cannot edit this event")
+        return vim.print("[Notion] Cannot view or edit this event")
     end
 end
 

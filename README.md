@@ -83,9 +83,11 @@ require"notion".setup {
         deleteKey = "d", 
         editKey = "e",
         openNotion = "o",
-        itemAdd = "a"
+        itemAdd = "a",
+        vieyKey = "v"
     },
-    notifications = true --Enable notifications
+    notifications = true, --Enable notifications
+    formatDelay = 300 --Delay before formatting when editing 
 }
 ```
 
@@ -113,9 +115,11 @@ require"notion".openMenu()
 
 Inside the `menu`, different functions are accesible through the default keys. As of right now, editKey will open, if possible, a markdown file containing all the data of the event/page. As of right now, saving the file doesnt push to the API, but this is a work in progress.
 
-In it's current state, two things can happen when calling the editKey:
+In it's current state, two things can happen when calling the viewKey or editKey:
 - Hovering a database entry, will create the file instantaneously
 - Hovering a page, will take a bit of time to fetch the different page blocks
+
+viewKey will only open markdown, but editKey will open markdown next to a compressed json file. Modifying the json and saving it will send the new data to the API. 
 
 Currently not caching or auto-updating page childrens as to not overwhelm the API, as a new API call would anyways be needed on key press to get the latest information
 
@@ -146,6 +150,6 @@ Note: `update` is asynchronous, and as such the data will take a bit of time to 
 
 ## Credits
 
-- [impulse.nvim](https://github.com/chrsm/impulse.nvim), Similar results, but not maintained, buggy in certain aspects and impossible for me to recode due to yue/moonscript
+- [impulse.nvim](https://github.com/chrsm/impulse.nvim), Similar results, but not maintained, buggy in certain aspects and impossible for me to recode due to yue/moonscript, thus cannot add edit support
 - [plenary.nvim](https://github.com/nvim-lua/plenary.nvim), Use of jobs for asynchronous updates
 - [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim), Use of pickers

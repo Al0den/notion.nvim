@@ -2,23 +2,60 @@ local M = {}
 
 local type
 
-local function onSave()
-    local prev = vim.json.decode(require "notion".readFile(vim.fn.stdpath("data") .. "/notion/tempData.txt"))
-    local new = require "notion".readFile(vim.fn.stdpath("data") .. "/notion/temp.md")
+M.onUpdate = function(data)
+    data = vim.json.decode(data)
+    if data.object ~= "page" then
+        return vim.schedule(function()
+            vim.notify(
+                "[Notion] Data sent to the api is incorrect, " .. vim.json.encode(data), vim.log.levels.ERROR)
+        end)
+    end
+end
 
+local removeIDs = function(properties)
+    for i, v in pairs(properties) do
+        if v.type == "select" then
+            properties[i].select.id = nil
+        elseif v.type == "multi_select" then
+            for _, value in ipairs(v.multi_select) do
+                value.id = nil
+            end
+        end
+        v.type = nil
+        v.id = nil
+    end
+    return properties
+end
+
+local function onSave()
+    if vim.api.nvim_buf_get_var(0, "owner") ~= "notionJson" then return end
+    local new = require "notion".readFile(vim.fn.stdpath("data") .. "/notion/tempJson.json")
+    new = string.gsub(new, "\n", "")
+    local data = vim.json.decode(new)
+    local id = require "notion".readFile(vim.fn.stdpath("data") .. "/notion/id.txt")
     if type == "page" then
-        vim.print("WIP")
+        return vim.notify("WIP")
+        --require "notion.request".savePage(testStr, data.main.id)
     elseif type == "databaseEntry" then
-        vim.print("WIP")
+        require "notion.request".savePage('{"properties": ' .. vim.json.encode(data) .. "}", id)
     end
 end
 
 --Create the temporary markdown file with the given content
-local function createFile(text)
+local function createFile(text, data, id)
+    local idPATH = vim.fn.stdpath("data") .. "/notion/id.txt"
+    require "notion".writeFile(idPATH, id)
     local path = vim.fn.stdpath("data") .. "/notion/temp.md"
+    local jsonPath = vim.fn.stdpath("data") .. "/notion/tempJson.json"
     require "notion".writeFile(path, text)
     vim.schedule(function()
-        vim.cmd("vsplit " .. path)
+        vim.cmd("edit " .. path)
+        vim.api.nvim_buf_set_var(0, "owner", "notionMarkdown")
+        vim.cmd("set noma")
+        vim.cmd("vsplit " .. jsonPath)
+        vim.api.nvim_buf_set_var(0, "owner", "notionJson")
+        vim.cmd('set ma')
+        vim.defer_fn(function() vim.lsp.buf.format() end, require "notion".opts.formatDelay)
         vim.api.nvim_create_autocmd("BufWritePost", {
             callback = onSave,
             buffer = 0
@@ -27,10 +64,13 @@ local function createFile(text)
 end
 
 --Transfom a page into markdown
-M.page = function(data, id)
+M.page = function(data, id, silent)
     local ftext = " # Title: " .. data.properties.title.title[1].plain_text
     local buf = require "notion.window".create("Loading...")
     local function onChild(child)
+        require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/tempJson.json",
+            '{ "main": ' .. vim.json.encode(data) .. ',\n "child":' .. child .. "}")
+
         vim.schedule(function()
             require "notion.window".close(buf)
         end)
@@ -106,14 +146,20 @@ M.page = function(data, id)
 
         local markdown = parseBlocks(response)
         type = "page"
-        createFile(ftext .. "\n\n" .. markdown)
+        if silent then
+            vim.schedule(function()
+                require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/temp.md", ftext .. "\n\n" .. markdown)
+                vim.cmd("vsplit " .. vim.fn.stdpath("data") .. "/notion/temp.md")
+            end)
+            return
+        end
+        createFile(ftext .. "\n\n" .. markdown, data, data.id)
     end
     require "notion.request".getChildren(id, onChild)
 end
 
 --Transform a databse entry into markdown
-M.databaseEntry = function(data, id)
-    require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/tempData.txt", vim.json.encode(data))
+M.databaseEntry = function(data, id, silent)
     local ftext = ""
     for i, v in pairs(data.properties) do
         if v.type == "title" and v.title[1] ~= vim.NIL then
@@ -136,8 +182,12 @@ M.databaseEntry = function(data, id)
             ftext = ftext .. "\n**" .. i .. "**: " .. v.people[1].name
         end
     end
+    require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/tempJson.json",
+        vim.json.encode(removeIDs(data.properties)))
+
     type = "databaseEntry"
-    createFile(ftext)
+    if silent then return ftext end
+    createFile(ftext, data, data.id)
 end
 
 return M

@@ -7,6 +7,7 @@ local previewers = require "telescope.previewers"
 
 local parser = require "notion.parse"
 local request = require "notion.request"
+local markdownParser = require "notion.markdown"
 local notion = require "notion"
 
 local M = {}
@@ -36,6 +37,24 @@ local openNotion = function(prompt_bufnr)
     os.execute("open notion://www.notion.so")
 end
 
+local viewItem = function(prompt_bufnr)
+    local selection = action_state.get_selected_entry()
+    local data = parser.objectFromID(selection.value.id)
+    local markdown
+    actions.close(prompt_bufnr)
+
+    if data.object == "database_id" then
+        markdown = markdownParser.databaseEntry(data.result, selection.value.id, true)
+    elseif data.object == "page_id" then
+        markdown = markdownParser.page(data.result, selection.value.id, true)
+        return
+    else
+        return vim.print("[Notion] Cannot view or edit this event")
+    end
+    local path = vim.fn.stdpath("data") .. "/notion/temp.md"
+    require "notion".writeFile(path, markdown)
+    vim.cmd("vsplit " .. path)
+end
 --Executed when an option is "hovered" inside the menu
 local function attach_mappings(prompt_bufnr, map)
     --On menu click
@@ -55,6 +74,7 @@ local function attach_mappings(prompt_bufnr, map)
     map("n", notion.opts.keys.editKey, editItem)
     map("n", notion.opts.keys.openNotion, openNotion)
     map("n", notion.opts.keys.itemAdd, addItem)
+    map("n", notion.opts.keys.viewKey, viewItem)
 
     return true
 end

@@ -120,7 +120,6 @@ end
 --Save a page with the new information provided
 M.savePage = function(data, id)
     local l = require "notion".readFile(storage)
-
     local job = Job:new({
         command = 'curl',
         args = {
@@ -129,13 +128,14 @@ M.savePage = function(data, id)
             '-H', 'Content-Type: application/json',
             '-H', 'Notion-Version: 2022-06-28',
             '-X', 'PATCH',
-            '--data', vim.fn.json_encode(data),
+            '--data', data,
         },
         on_exit = function(b, code)
-            if code == 0 then
+            if code == 0 and b._stdout_results[1].object ~= "error" then
                 vim.print("[Notion] Page updated successfully")
+                require "notion.markdown".onUpdate(b._stdout_results[1])
             else
-                vim.print("[Notion] Failed with code " .. code)
+                vim.print(b._stdout_results[1].message or code)
             end
         end
     })

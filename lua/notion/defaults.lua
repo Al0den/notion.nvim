@@ -7,8 +7,10 @@ M.keys = {
     deleteKey = "d",
     openNotion = "o",
     editKey = "e",
-    itemAdd = "a"
+    itemAdd = "a",
+    viewKey = "v"
 }
 M.notification = true
+M.formatDelay = 300
 
 return M
