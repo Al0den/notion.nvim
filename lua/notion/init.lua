@@ -110,8 +110,4 @@ M.setup = function(opts)
     end
 end
 
-M.test = function()
-
-end
-
 return M
