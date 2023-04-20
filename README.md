@@ -55,7 +55,7 @@ The simplest of use is the `Notion` (`require"notion".openMenu()`), which opens 
 vim.keymaps.set("n", "<leader>no", function () require"notion".openMenu() end)
 ```
 
-As an example, to insert the next event inside your lualine something, you could do something such as:
+As an example, to insert the next event inside your lualine, you could do something such as:
 
 ```lua
 --lualine.lua
