@@ -150,6 +150,7 @@ M.page = function(data, id, silent)
             vim.schedule(function()
                 require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/temp.md", ftext .. "\n\n" .. markdown)
                 vim.cmd("vsplit " .. vim.fn.stdpath("data") .. "/notion/temp.md")
+                vim.api.nvim_buf_set_var(0, "owner", "notionMarkdown")
             end)
             return
         end

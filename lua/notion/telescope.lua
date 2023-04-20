@@ -54,6 +54,7 @@ local viewItem = function(prompt_bufnr)
     local path = vim.fn.stdpath("data") .. "/notion/temp.md"
     require "notion".writeFile(path, markdown)
     vim.cmd("vsplit " .. path)
+    vim.api.nvim_buf_set_var(0, "owner", "notionMarkdown")
 end
 --Executed when an option is "hovered" inside the menu
 local function attach_mappings(prompt_bufnr, map)
