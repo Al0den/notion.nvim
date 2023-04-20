@@ -27,6 +27,25 @@ local removeIDs = function(properties)
     return properties
 end
 
+local removeChildrenTrash = function(childs)
+    for i, v in ipairs(childs) do
+        v.archived = nil
+        v.object = nil
+        v.last_edited_time = nil
+        v.created_time = nil
+        v.has_children = nil
+        v.created_by = nil
+        v.last_edited_by = nil
+        v.parent = nil
+        if v["paragraph"] then
+            for _, k in ipairs(v.paragraph.rich_text) do
+                k.plain_text = nil
+            end
+        end
+    end
+    return childs
+end
+
 local function onSave()
     if vim.api.nvim_buf_get_var(0, "owner") ~= "notionJson" then return end
     local new = require "notion".readFile(vim.fn.stdpath("data") .. "/notion/tempJson.json")
@@ -34,6 +53,9 @@ local function onSave()
     local data = vim.json.decode(new)
     local id = require "notion".readFile(vim.fn.stdpath("data") .. "/notion/id.txt")
     if type == "page" then
+        for i, v in ipairs(data) do
+            require "notion.request".saveBlock(vim.json.encode(v[v.type]), v.id)
+        end
         return vim.notify("WIP")
         --require "notion.request".savePage(testStr, data.main.id)
     elseif type == "databaseEntry" then
@@ -49,9 +71,9 @@ local function createFile(text, data, id)
     local jsonPath = vim.fn.stdpath("data") .. "/notion/tempJson.json"
     require "notion".writeFile(path, text)
     vim.schedule(function()
-        vim.cmd("edit " .. path)
-        vim.api.nvim_buf_set_var(0, "owner", "notionMarkdown")
-        vim.cmd("set noma")
+        --        vim.cmd("edit " .. path)
+        --      vim.api.nvim_buf_set_var(0, "owner", "notionMarkdown")
+        --    vim.cmd("set noma")
         vim.cmd("vsplit " .. jsonPath)
         vim.api.nvim_buf_set_var(0, "owner", "notionJson")
         vim.cmd('set ma')
@@ -68,9 +90,8 @@ M.page = function(data, id, silent)
     local ftext = " # Title: " .. data.properties.title.title[1].plain_text
     local buf = require "notion.window".create("Loading...")
     local function onChild(child)
-        require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/tempJson.json",
-            '{ "main": ' .. vim.json.encode(data) .. ',\n "child":' .. child .. "}")
-
+        local toWrite = removeChildrenTrash(vim.json.decode(child).results)
+        require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/tempJson.json", vim.json.encode(toWrite))
         vim.schedule(function()
             require "notion.window".close(buf)
         end)
