@@ -11,6 +11,8 @@ Currently, only database entries are modifiable, but all data is viewable as mar
 
 ### Markdown 
 ![image](https://user-images.githubusercontent.com/111601320/232716446-96a696b3-9df4-4b4f-848f-ee76c15af61b.jpeg)
+### Database entry modification
+![image](https://user-images.githubusercontent.com/111601320/233300186-a45a871e-bd5b-4757-9863-5d512858c373.jpeg)
 
 ## Installation and setup
 
