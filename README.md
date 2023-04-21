@@ -144,8 +144,8 @@ Note: `update` is asynchronous, and as such the data will take a bit of time to 
 
 ## Roadmap
 
-- Add addItem key
-- Add support for updating notion pages / database entries
+- Add addItem key 
+- Add support for updating notion pages / database entries (WIP)
 - Add reminder notifications
 - Add support for nvim-notify (Not in the near future)
 - Improve deleting as to force deleting in saved data rather than force api update (Not in the near future)
