@@ -132,8 +132,10 @@ M.savePage = function(data, id)
         },
         on_exit = function(b, code)
             if code == 0 and b._stdout_results[1].object ~= "error" then
-                vim.print("[Notion] Page updated successfully")
-                require "notion.markdown".onUpdate(b._stdout_results[1])
+                local ans = vim.json.decode(b._stdout_results[1])
+                if ans.object == "error" then
+                    vim.print(b._stdout_results[1])
+                end
             else
                 vim.print(b._stdout_results[1].message or code)
             end

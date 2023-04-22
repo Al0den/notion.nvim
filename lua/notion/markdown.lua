@@ -2,10 +2,7 @@ local M = {}
 
 local type
 
-M.onUpdate = function(data)
-    data = vim.json.decode(data)
-end
-
+--Remove id's
 local removeIDs = function(properties)
     for i, v in pairs(properties) do
         if v.type == "select" then
@@ -21,6 +18,7 @@ local removeIDs = function(properties)
     return properties
 end
 
+--Clean out according to user preferences the markdown editor menu
 local removeChildrenTrash = function(childs)
     local editorType = require "notion".opts.editor
     if editorType == "full" then return childs end
@@ -97,7 +95,6 @@ local function onSave()
     local new = require "notion".readFile(vim.fn.stdpath("data") .. "/notion/tempJson.json")
     new = string.gsub(new, "\n", "")
     local data = vim.json.decode(new)
-    local prevData = vim.json.decode(prev)
     local id = require "notion".readFile(vim.fn.stdpath("data") .. "/notion/id.txt")
     if type == "page" then
         for _, v in ipairs(data) do
@@ -117,9 +114,6 @@ local function createFile(text, data, id)
     local jsonPath = vim.fn.stdpath("data") .. "/notion/tempJson.json"
     require "notion".writeFile(path, text)
     vim.schedule(function()
-        --        vim.cmd("edit " .. path)
-        --      vim.api.nvim_buf_set_var(0, "owner", "notionMarkdown")
-        --    vim.cmd("set noma")
         vim.cmd("vsplit " .. jsonPath)
         vim.api.nvim_buf_set_var(0, "owner", "notionJson")
         vim.cmd('set ma')
