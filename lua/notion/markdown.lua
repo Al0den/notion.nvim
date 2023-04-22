@@ -37,21 +37,16 @@ local removeChildrenTrash = function(childs)
             for _, k in ipairs(v.paragraph.rich_text) do
                 k.plain_text = nil
                 if editorType == "light" then
-                    k.text.link = nil
                     k.annotations = nil
-                    k.type = nil
                     k.href = nil
                 end
             end
         end
         if v["heading_1"] then
-            if editorType == "light" then v.heading_1.is_toggleable = nil end
             for _, k in ipairs(v.heading_1.rich_text) do
                 k.plain_text = nil
                 if editorType == "light" then
-                    k.text.link = nil
                     k.annotations = nil
-                    k.type = nil
                     k.href = nil
                 end
             end
@@ -60,45 +55,34 @@ local removeChildrenTrash = function(childs)
             for _, k in ipairs(v.numbered_list_item.rich_text) do
                 k.plain_text = nil
                 if editorType == "light" then
-                    k.text.link = nil
                     k.annotations = nil
-                    k.type = nil
                     k.href = nil
                 end
             end
         end
         if v["heading_3"] then
-            if editorType == "light" then v.heading_3.is_toggleable = nil end
             for _, k in ipairs(v.heading_3.rich_text) do
                 k.plain_text = nil
                 if editorType == "light" then
-                    k.text.link = nil
                     k.annotations = nil
-                    k.type = nil
                     k.href = nil
                 end
             end
         end
         if v["heading_2"] then
-            if editorType == "light" then v.heading_2.is_toggleable = nil end
             for _, k in ipairs(v.heading_2.rich_text) do
                 k.plain_text = nil
                 if editorType == "light" then
-                    k.text.link = nil
                     k.annotations = nil
-                    k.type = nil
                     k.href = nil
                 end
             end
         end
         if v["bulleted_list_item"] then
-            if editorType == "light" then v.bulleted_list_item.is_toggleable = nil end
             for _, k in ipairs(v.bulleted_list_item.rich_text) do
                 k.plain_text = nil
                 if editorType == "light" then
-                    k.text.link = nil
                     k.annotations = nil
-                    k.type = nil
                     k.href = nil
                 end
             end
