@@ -4,12 +4,6 @@ local type
 
 M.onUpdate = function(data)
     data = vim.json.decode(data)
-    if data.object ~= "page" then
-        return vim.schedule(function()
-            vim.notify(
-                "[Notion] Data sent to the api is incorrect, " .. vim.json.encode(data), vim.log.levels.ERROR)
-        end)
-    end
 end
 
 local removeIDs = function(properties)
@@ -48,12 +42,14 @@ end
 
 local function onSave()
     if vim.api.nvim_buf_get_var(0, "owner") ~= "notionJson" then return end
+    local prev = require "notion".readFile(vim.fn.stdpath("data") .. "/notion/staticJson.json")
     local new = require "notion".readFile(vim.fn.stdpath("data") .. "/notion/tempJson.json")
     new = string.gsub(new, "\n", "")
     local data = vim.json.decode(new)
+    local prevData = vim.json.decode(prev)
     local id = require "notion".readFile(vim.fn.stdpath("data") .. "/notion/id.txt")
     if type == "page" then
-        for i, v in ipairs(data) do
+        for _, v in ipairs(data) do
             require "notion.request".saveBlock(vim.json.encode(v), v.id)
         end
         return vim.notify("WIP")
@@ -91,6 +87,7 @@ M.page = function(data, id, silent)
     local function onChild(child)
         local toWrite = removeChildrenTrash(vim.json.decode(child).results)
         require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/tempJson.json", vim.json.encode(toWrite))
+        require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/staticJson.json", vim.json.encode(toWrite))
         vim.schedule(function()
             require "notion.window".close(buf)
         end)

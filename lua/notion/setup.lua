@@ -59,6 +59,7 @@ end
 
 --User accesible function
 M.initialisation = function()
+    require "notion".fileInit()
     notionSetup()
     return status
 end

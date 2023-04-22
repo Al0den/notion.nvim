@@ -77,7 +77,11 @@ local function initialiseFiles()
     os.execute("touch " .. path .. "saved.txt")
     os.execute("touch " .. path .. "temp.md")
     os.execute("touch " .. path .. "tempData.txt")
+    os.execute("touch" .. path .. "tempJson.json")
+    os.execute("touch" .. path .. "staticJson.json")
 end
+
+M.fileInit = initialiseFiles
 
 --Self explanatory
 local function clearData()
@@ -91,7 +95,6 @@ end
 
 --Initial function
 M.setup = function(opts)
-    initialiseFiles()
     M.opts = vim.tbl_deep_extend("force", defaults, opts or {})
 
     vim.api.nvim_create_user_command("NotionSetup", function() initialized = require("notion.setup").initialisation() end,

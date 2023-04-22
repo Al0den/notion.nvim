@@ -157,9 +157,7 @@ M.saveBlock = function(data, id)
         },
         on_exit = function(b, code)
             if code == 0 and b._stdout_results[1].object ~= "error" then
-                vim.print(b._stdout_results[1])
             else
-                vim.print(b._stdout_results[1].message or code)
             end
         end
     })

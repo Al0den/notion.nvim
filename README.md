@@ -2,7 +2,7 @@
 
 `notion.nvim` is a [Neovim](https://neovim.io) plugin made for accesing the [Notion](https://notion.so) API, formatting and ease of integration.
 
-Currently, only database entries are modifiable, but all data is viewable as markdown
+Updates are in testing, but available on main branch!
 
 ## Screenshots
 
@@ -145,7 +145,6 @@ Note: `update` is asynchronous, and as such the data will take a bit of time to 
 ## Roadmap
 
 - Add addItem key 
-- Add support for updating notion pages / database entries (WIP)
 - Add reminder notifications
 - Add support for nvim-notify (Not in the near future)
 - Improve deleting as to force deleting in saved data rather than force api update (Not in the near future)
