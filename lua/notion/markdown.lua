@@ -54,10 +54,9 @@ local function onSave()
     local id = require "notion".readFile(vim.fn.stdpath("data") .. "/notion/id.txt")
     if type == "page" then
         for i, v in ipairs(data) do
-            require "notion.request".saveBlock(vim.json.encode(v[v.type]), v.id)
+            require "notion.request".saveBlock(vim.json.encode(v), v.id)
         end
         return vim.notify("WIP")
-        --require "notion.request".savePage(testStr, data.main.id)
     elseif type == "databaseEntry" then
         require "notion.request".savePage('{"properties": ' .. vim.json.encode(data) .. "}", id)
     end

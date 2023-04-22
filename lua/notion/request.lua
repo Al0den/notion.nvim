@@ -157,34 +157,9 @@ M.saveBlock = function(data, id)
         },
         on_exit = function(b, code)
             if code == 0 and b._stdout_results[1].object ~= "error" then
-                --vim.print(b._stdout_results[1])
+                vim.print(b._stdout_results[1])
             else
                 vim.print(b._stdout_results[1].message or code)
-            end
-        end
-    })
-
-    job:start()
-end
---Save a page children's
-M.saveChildrens = function(data, id)
-    local l = require "notion".readFile(storage)
-
-    local job = Job:new({
-        command = 'curl',
-        args = {
-            'https://api.notion.com/v1/blocks/' .. id .. '/children',
-            '-H', 'Authorization: Bearer ' .. l,
-            '-H', 'Content-Type: application/json',
-            '-H', 'Notion-Version: 2022-06-28',
-            '-X', 'PATCH',
-            '--data', vim.fn.json_encode(data),
-        },
-        on_exit = function(b, code)
-            if code == 0 then
-                vim.print("[Notion] Childrens updated successfully")
-            else
-                vim.print("[Notion] Failed with code " .. code)
             end
         end
     })
