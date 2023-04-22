@@ -22,6 +22,8 @@ local removeIDs = function(properties)
 end
 
 local removeChildrenTrash = function(childs)
+    local editorType = require "notion".opts.editor
+    if editorType == "full" then return childs end
     for i, v in ipairs(childs) do
         v.archived = nil
         v.object = nil
@@ -34,6 +36,71 @@ local removeChildrenTrash = function(childs)
         if v["paragraph"] then
             for _, k in ipairs(v.paragraph.rich_text) do
                 k.plain_text = nil
+                if editorType == "light" then
+                    k.text.link = nil
+                    k.annotations = nil
+                    k.type = nil
+                    k.href = nil
+                end
+            end
+        end
+        if v["heading_1"] then
+            if editorType == "light" then v.heading_1.is_toggleable = nil end
+            for _, k in ipairs(v.heading_1.rich_text) do
+                k.plain_text = nil
+                if editorType == "light" then
+                    k.text.link = nil
+                    k.annotations = nil
+                    k.type = nil
+                    k.href = nil
+                end
+            end
+        end
+        if v["numbered_list_item"] then
+            for _, k in ipairs(v.numbered_list_item.rich_text) do
+                k.plain_text = nil
+                if editorType == "light" then
+                    k.text.link = nil
+                    k.annotations = nil
+                    k.type = nil
+                    k.href = nil
+                end
+            end
+        end
+        if v["heading_3"] then
+            if editorType == "light" then v.heading_3.is_toggleable = nil end
+            for _, k in ipairs(v.heading_3.rich_text) do
+                k.plain_text = nil
+                if editorType == "light" then
+                    k.text.link = nil
+                    k.annotations = nil
+                    k.type = nil
+                    k.href = nil
+                end
+            end
+        end
+        if v["heading_2"] then
+            if editorType == "light" then v.heading_2.is_toggleable = nil end
+            for _, k in ipairs(v.heading_2.rich_text) do
+                k.plain_text = nil
+                if editorType == "light" then
+                    k.text.link = nil
+                    k.annotations = nil
+                    k.type = nil
+                    k.href = nil
+                end
+            end
+        end
+        if v["bulleted_list_item"] then
+            if editorType == "light" then v.bulleted_list_item.is_toggleable = nil end
+            for _, k in ipairs(v.bulleted_list_item.rich_text) do
+                k.plain_text = nil
+                if editorType == "light" then
+                    k.text.link = nil
+                    k.annotations = nil
+                    k.type = nil
+                    k.href = nil
+                end
             end
         end
     end

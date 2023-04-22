@@ -12,5 +12,6 @@ M.keys = {
 }
 M.notification = true
 M.formatDelay = 300
+M.editor = "light"
 
 return M

@@ -89,7 +89,8 @@ require"notion".setup {
         vieyKey = "v"
     },
     notifications = true, --Enable notifications
-    formatDelay = 300 --Delay before formatting when editing 
+    formatDelay = 300, --Delay before formatting when editing 
+    editor = "light" --light/medium/full, changes the amount of data displayed in editor
 }
 ```
 
