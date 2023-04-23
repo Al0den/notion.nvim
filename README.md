@@ -86,7 +86,7 @@ require"notion".setup {
         editKey = "e",
         openNotion = "o",
         itemAdd = "a",
-        vieyKey = "v"
+        viewKey = "v"
     },
     notifications = true, --Enable notifications
     formatDelay = 300, --Delay before formatting when editing 

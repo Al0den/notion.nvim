@@ -4,7 +4,8 @@ local defaults = require "notion.defaults"
 local req = require "notion.request"
 
 local initialized = false
-local lastUpdate = os.time()
+
+M.lastUpdate = os.time()
 
 M.readFile = function(filename)
     local f = assert(io.open(filename, "r"))
@@ -49,7 +50,7 @@ M.update = function(opts)
     opts.window = opts.window or nil
 
     if not M.checkInit() then return end
-    lastUpdate = os.time()
+    M.lastUpdate = os.time()
 
     local window = nil
 
@@ -79,8 +80,7 @@ local function initialiseFiles()
     os.execute("touch " .. path .. "saved.txt")
     os.execute("touch " .. path .. "temp.md")
     os.execute("touch " .. path .. "tempData.txt")
-    os.execute("touch" .. path .. "tempJson.json")
-    os.execute("touch" .. path .. "staticJson.json")
+    os.execute("touch " .. path .. "tempJson.json")
 end
 
 M.fileInit = initialiseFiles
@@ -117,7 +117,7 @@ end
 
 --Give updates about current status
 M.status = function()
-    local str = "Last Update: " .. os.difftime(os.time(), lastUpdate) .. " seconds ago"
+    local str = "Last Update: " .. os.difftime(os.time(), M.lastUpdate) .. " seconds ago"
     vim.print(str)
 end
 

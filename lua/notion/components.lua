@@ -16,6 +16,10 @@ M.nextEventName = function()
     return data.properties.Name.title[1].plain_text
 end
 
+M.lastUpdate = function()
+    return "Last Update: " .. os.difftime(os.time(), require "notion".lastUpdate) .. " seconds ago"
+end
+
 --Get the date of future event
 M.nextEventDate = function()
     local data = getEarliestData()
