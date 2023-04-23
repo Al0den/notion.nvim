@@ -31,10 +31,14 @@ end
 
 --Function linked to itemAdd key
 local addItem = function(prompt_bufnr)
-    vim.print("Not yet implemented")
+    vim.notify("Not yet implemented")
 end
 local openNotion = function(prompt_bufnr)
-    os.execute("open notion://www.notion.so")
+    if require "notion".opts.open == "notion" then
+        os.execute("open notion://www.notion.so")
+    else
+        os.execute("open https://www.notion.so")
+    end
 end
 
 local viewItem = function(prompt_bufnr)
