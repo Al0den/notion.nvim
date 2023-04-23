@@ -1,9 +1,11 @@
 local M = {}
 
-local initialized = false
 
 local defaults = require "notion.defaults"
 local req = require "notion.request"
+
+local initialized = false
+local lastUpdate = os.time()
 
 M.readFile = function(filename)
     local f = assert(io.open(filename, "r"))
@@ -48,6 +50,7 @@ M.update = function(opts)
     opts.window = opts.window or nil
 
     if not M.checkInit() then return end
+    lastUpdate = os.time()
 
     local window = nil
 
@@ -111,6 +114,12 @@ M.setup = function(opts)
         vim.fn.timer_start(M.opts.updateDelay, function() M.update({ silent = true, window = nil }) end,
             { ["repeat"] = -1 })
     end
+end
+
+--Give updates about current status
+M.status = function()
+    local str = "Last Update: " .. os.difftime(os.time(), lastUpdate) .. " seconds ago"
+    vim.print(str)
 end
 
 return M
