@@ -2,7 +2,7 @@
 
 `notion.nvim` is a [Neovim](https://neovim.io) plugin made for accesing the [Notion](https://notion.so) API, formatting and ease of integration.
 
-Updates are in testing, but available on main branch!
+View, edit and update your notion pages and database entries from inside neovim, and access pre-coded functions
 
 ## Screenshots
 
