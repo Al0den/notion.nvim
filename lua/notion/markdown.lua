@@ -28,9 +28,8 @@ local function onSave()
     if type == "page" then
         local temp = {}
         local i = 1
-        for i, v in ipairs(data) do
-            --require "notion.request".saveBlock(vim.json.encode(v), v.id)
-            temp[i] = v
+        for k, v in ipairs(data) do
+            temp[k] = v
         end
         local window = require "notion.window".create("Saving: " .. 0 .. "/" .. #temp)
         vim.fn.timer_start(1000, function()
@@ -42,7 +41,6 @@ local function onSave()
                 require "notion.window".close(window)
             end
         end, { ["repeat"] = #temp })
-        return vim.notify("WIP")
     elseif type == "databaseEntry" then
         require "notion.request".savePage('{"properties": ' .. vim.json.encode(data) .. "}", id)
     end
