@@ -238,23 +238,23 @@ M.databaseEntry = function(data, id, silent)
     local ftext = ""
     for i, v in pairs(data.properties) do
         if v.type == "title" and v.title[1] ~= vim.NIL then
-            ftext = ftext .. "\n**" .. i .. "**: " .. v.title[1].plain_text
+            ftext = ftext .. "**" .. i .. "**: " .. v.title[1].plain_text .. "\n"
         elseif v.type == "select" and v.select ~= nil then
-            ftext = ftext .. "\n**" .. i .. "**: " .. v.select.name
+            ftext = ftext .. "**" .. i .. "**: " .. v.select.name .. "\n"
         elseif v.type == "multi_select" then
             local temp = {}
             for _, j in pairs(v.multi_select) do
                 table.insert(temp, j.name)
             end
-            ftext = ftext .. "\n**" .. i .. "**: " .. table.concat(temp, ", ")
+            ftext = ftext .. "**" .. i .. "**: " .. table.concat(temp, ", ") .. "\n"
         elseif v.type == "number" and v.number ~= vim.NIL then
-            ftext = ftext .. "\n**" .. i .. "**: " .. v.number
+            ftext = ftext .. "**" .. i .. "**: " .. v.number .. "\n"
         elseif v.type == "email" and v.email ~= vim.NIL then
-            ftext = ftext .. "\n**" .. i .. "**: " .. v.email
+            ftext = ftext .. "**" .. i .. "**: " .. v.email .. "\n"
         elseif v.type == "url" and v.url ~= vim.NIL then
-            ftext = ftext .. "\n**" .. i .. "**: " .. v.url
+            ftext = ftext .. "**" .. i .. "**: " .. v.url .. "\n"
         elseif v.type == "people" and v.people[1] ~= nil then
-            ftext = ftext .. "\n**" .. i .. "**: " .. v.people[1].name
+            ftext = ftext .. "**" .. i .. "**: " .. v.people[1].name .. "\n"
         end
     end
     require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/tempJson.json",
