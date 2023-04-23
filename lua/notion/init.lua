@@ -1,6 +1,5 @@
 local M = {}
 
-
 local defaults = require "notion.defaults"
 local req = require "notion.request"
 

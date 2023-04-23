@@ -162,8 +162,6 @@ M.saveBlock = function(data, id)
                 local ans = vim.json.decode(b._stdout_results[1])
                 if ans.object == "error" then
                     vim.print(b._stdout_results[1])
-                else
-                    vim.schedule(function() require "notion".update({ silent = true }) end)
                 end
             else
                 vim.print(code)

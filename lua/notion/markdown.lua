@@ -18,7 +18,56 @@ local removeIDs = function(properties)
     return properties
 end
 
---Clean out according to user preferences the markdown editor menu
+--Executed on editor save
+local function onSave()
+    if vim.api.nvim_buf_get_var(0, "owner") ~= "notionJson" then return end
+    local new = require "notion".readFile(vim.fn.stdpath("data") .. "/notion/tempJson.json")
+    new = string.gsub(new, "\n", "")
+    local data = vim.json.decode(new)
+    local id = require "notion".readFile(vim.fn.stdpath("data") .. "/notion/id.txt")
+    if type == "page" then
+        local temp = {}
+        local i = 1
+        for i, v in ipairs(data) do
+            --require "notion.request".saveBlock(vim.json.encode(v), v.id)
+            temp[i] = v
+        end
+        local window = require "notion.window".create("Saving: " .. 0 .. "/" .. #temp)
+        vim.fn.timer_start(1000, function()
+            require "notion.request".saveBlock(vim.json.encode(temp[i]), temp[i].id)
+            require "notion.window".close(window)
+            window = require "notion.window".create("Saving: " .. i .. "/" .. #temp)
+            i = i + 1
+            if i == #temp + 1 then
+                require "notion.window".close(window)
+            end
+        end, { ["repeat"] = #temp })
+        return vim.notify("WIP")
+    elseif type == "databaseEntry" then
+        require "notion.request".savePage('{"properties": ' .. vim.json.encode(data) .. "}", id)
+    end
+end
+
+--Create the temporary markdown file with the given content
+local function createFile(text, data, id)
+    local idPATH = vim.fn.stdpath("data") .. "/notion/id.txt"
+    require "notion".writeFile(idPATH, id)
+    local path = vim.fn.stdpath("data") .. "/notion/temp.md"
+    local jsonPath = vim.fn.stdpath("data") .. "/notion/tempJson.json"
+    require "notion".writeFile(path, text)
+    vim.schedule(function()
+        vim.cmd("vsplit " .. jsonPath)
+        vim.api.nvim_buf_set_var(0, "owner", "notionJson")
+        vim.cmd('set ma')
+        vim.defer_fn(function() vim.lsp.buf.format() end, require "notion".opts.formatDelay)
+        vim.api.nvim_create_autocmd("BufWritePost", {
+            callback = onSave,
+            buffer = 0
+        })
+    end)
+end
+
+--Remove according to editor preferences
 local removeChildrenTrash = function(childs)
     local editorType = require "notion".opts.editor
     if editorType == "full" then return childs end
@@ -89,41 +138,6 @@ local removeChildrenTrash = function(childs)
     return childs
 end
 
-local function onSave()
-    if vim.api.nvim_buf_get_var(0, "owner") ~= "notionJson" then return end
-    local prev = require "notion".readFile(vim.fn.stdpath("data") .. "/notion/staticJson.json")
-    local new = require "notion".readFile(vim.fn.stdpath("data") .. "/notion/tempJson.json")
-    new = string.gsub(new, "\n", "")
-    local data = vim.json.decode(new)
-    local id = require "notion".readFile(vim.fn.stdpath("data") .. "/notion/id.txt")
-    if type == "page" then
-        for _, v in ipairs(data) do
-            require "notion.request".saveBlock(vim.json.encode(v), v.id)
-        end
-        return vim.notify("WIP")
-    elseif type == "databaseEntry" then
-        require "notion.request".savePage('{"properties": ' .. vim.json.encode(data) .. "}", id)
-    end
-end
-
---Create the temporary markdown file with the given content
-local function createFile(text, data, id)
-    local idPATH = vim.fn.stdpath("data") .. "/notion/id.txt"
-    require "notion".writeFile(idPATH, id)
-    local path = vim.fn.stdpath("data") .. "/notion/temp.md"
-    local jsonPath = vim.fn.stdpath("data") .. "/notion/tempJson.json"
-    require "notion".writeFile(path, text)
-    vim.schedule(function()
-        vim.cmd("vsplit " .. jsonPath)
-        vim.api.nvim_buf_set_var(0, "owner", "notionJson")
-        vim.cmd('set ma')
-        vim.defer_fn(function() vim.lsp.buf.format() end, require "notion".opts.formatDelay)
-        vim.api.nvim_create_autocmd("BufWritePost", {
-            callback = onSave,
-            buffer = 0
-        })
-    end)
-end
 
 --Transfom a page into markdown
 M.page = function(data, id, silent)
