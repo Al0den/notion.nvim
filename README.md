@@ -79,7 +79,7 @@ The default configuration is:
 ```lua
 require"notion".setup {
     autoUpdate = true, --Allow the plugin to automatically update 
-    updateDelay = 60000, --Delay between updates, only useful if autoUpdate true
+    updateDelay = 10000, --Delay between updates, only useful if autoUpdate true
     open = "notion", --If not set, or set to something different to notion, will open in  web browser
     keys = { --Menu keys
         deleteKey = "d", 
