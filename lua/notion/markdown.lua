@@ -57,7 +57,7 @@ local function createFile(text, data, id)
         vim.cmd("vsplit " .. jsonPath)
         vim.api.nvim_buf_set_var(0, "owner", "notionJson")
         vim.cmd('set ma')
-        vim.defer_fn(function() vim.lsp.buf.format() end, require "notion".opts.formatDelay)
+        vim.defer_fn(function() vim.lsp.buf.format() end, require "notion".opts.delays.format)
         vim.api.nvim_create_autocmd("BufWritePost", {
             callback = onSave,
             buffer = 0

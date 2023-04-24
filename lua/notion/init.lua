@@ -18,7 +18,7 @@ M.writeFile = function(filename, content)
     local f = assert(io.open(filename, "w"))
     f:write(content)
     f:close()
-    return
+    return content
 end
 
 --Access init status from other files
@@ -81,6 +81,7 @@ local function initialiseFiles()
     os.execute("touch " .. path .. "temp.md")
     os.execute("touch " .. path .. "tempData.txt")
     os.execute("touch " .. path .. "tempJson.json")
+    os.execute("touch " .. path .. 'reminders.txt')
 end
 
 M.fileInit = initialiseFiles
@@ -93,6 +94,28 @@ local function clearData()
     initialized = false
     initialiseFiles()
     vim.print("[Notion] Cleared all saved data")
+end
+
+--Run timer checks
+local function checkReminders()
+    local reminders = M.readFile(vim.fn.stdpath("data") .. "/notion/reminders.txt")
+    local lines = vim.split(reminders, "\n")
+    local final = {}
+    for _, k in ipairs(lines) do
+        if k == "" or k == " " then break end
+        local data = vim.split(k, " ")
+        local Y, M, D, H, min = data[1]:match("(%d+)%-(%d+)%-(%d+)T(%d+):(%d+)")
+        difference = os.difftime(os.time({ year = Y, month = M, day = D, hour = H, min = min }), os.time())
+        if difference < 60 then
+            data[1] = ""
+            local name = table.concat(data, " ")
+            local win = require "notion.window".createBig("Reminder for: " .. name)
+            vim.defer_fn(function() require "notion.window".close(win) end, 5000)
+        else
+            table.insert(final, k)
+        end
+    end
+    require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/reminders.txt", table.concat(final, "\n"))
 end
 
 --Initial function
@@ -110,14 +133,15 @@ M.setup = function(opts)
 
     if M.opts.autoUpdate then
         M.update({ silent = true })
-        vim.fn.timer_start(M.opts.updateDelay, function() M.update({ silent = true, window = nil }) end,
+        vim.fn.timer_start(M.opts.delays.update, function() M.update({ silent = true, window = nil }) end,
             { ["repeat"] = -1 })
+        vim.fn.timer_start(M.opts.delays.reminder, function() checkReminders() end, { ["repeat"] = -1 })
     end
 end
 
 --Give updates about current status
 M.status = function()
-    local str = "Last Update: " .. os.difftime(os.time(), M.lastUpdate) .. " seconds ago"
+    local str = "[Notion] Last Update: " .. os.difftime(os.time(), M.lastUpdate) .. " seconds ago"
     vim.print(str)
 end
 

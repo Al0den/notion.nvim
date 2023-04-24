@@ -79,7 +79,6 @@ The default configuration is:
 ```lua
 require"notion".setup {
     autoUpdate = true, --Allow the plugin to automatically update 
-    updateDelay = 10000, --Delay between updates, only useful if autoUpdate true
     open = "notion", --If not set, or set to something different to notion, will open in  web browser
     keys = { --Menu keys
         deleteKey = "d", 
@@ -88,8 +87,12 @@ require"notion".setup {
         itemAdd = "a",
         viewKey = "v"
     },
+    delays = { --Delays before running specific actions
+        format = 300,
+        reminder = 200,
+        update = 10000
+    },
     notifications = true, --Enable notifications
-    formatDelay = 300, --Delay before formatting when editing 
     editor = "light" --light/medium/full, changes the amount of data displayed in editor
 }
 ```
@@ -126,6 +129,7 @@ Currently not caching or auto-updating page childrens as to not overwhelm the AP
 
 Pressing deleteKey when hovering over an event will delete an item from Notion. Note that once deleted, it will try to update the saved data straight away, but re-opening the menu fast may still show the event
 
+Pressing remindKey will allow you to set reminders that will send you a notification on the specified time. Works even if nvim is relaunched or closed
 ### Updates
 
 If you want to manually update the data stored, you can use `require"notion".update` function, used as such:

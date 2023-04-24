@@ -1,17 +1,22 @@
 local M = {}
 
 M.autoUpdate = true
-M.updateDelay = 10000
 M.open = "notion"
 M.keys = {
     deleteKey = "d",
     openNotion = "o",
     editKey = "e",
     itemAdd = "a",
-    viewKey = "v"
+    viewKey = "v",
+    remindKey = "r"
+}
+M.delays = {
+    reminder = 4000,
+    format = 300,
+    update = 10000
 }
 M.notification = true
-M.formatDelay = 300
 M.editor = "light"
+M.databaseName = "Name"
 
 return M

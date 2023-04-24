@@ -29,10 +29,6 @@ local editItem = function(prompt_bufnr)
     parser.notionToMarkdown(selection)
 end
 
---Function linked to itemAdd key
-local addItem = function(prompt_bufnr)
-    vim.notify("Not yet implemented")
-end
 local openNotion = function(prompt_bufnr)
     if require "notion".opts.open == "notion" then
         os.execute("open notion://www.notion.so")
@@ -60,6 +56,27 @@ local viewItem = function(prompt_bufnr)
     vim.cmd("vsplit " .. path)
     vim.api.nvim_buf_set_var(0, "owner", "notionMarkdown")
 end
+
+--Set a reminder for a specific event
+local remind = function(prompt_bufnr)
+    actions.close(prompt_bufnr)
+    local selection = action_state.get_selected_entry()
+    local event = parser.objectFromID(selection.value.id)
+    local min_hour = vim.fn.input("Time (hh:mm): ")
+    local date = vim.fn.input("Date (yyyy-mm-dd): ")
+    if not date or date == "" or date == " " then
+        date = vim.fn.strftime("%Y-%m-%d")
+    end
+    if not min_hour or min_hour == "" or min_hour == " " then
+        min_hour = vim.fn.strftime("%H:%M")
+    end
+    local path = vim.fn.stdpath("data") .. '/notion/reminders.txt'
+    local file = io.open(path, "a")
+    if file == nil then return vim.notify("[Notion] Setup is incomplete") end
+    file:write(date .. "T" .. min_hour .. " " .. selection.value.displayName .. "\n")
+    vim.print("[Notion] Reminder set for " .. date .. " at " .. min_hour)
+end
+
 --Executed when an option is "hovered" inside the menu
 local function attach_mappings(prompt_bufnr, map)
     --On menu click
@@ -78,8 +95,8 @@ local function attach_mappings(prompt_bufnr, map)
     map("n", notion.opts.keys.deleteKey, deleteItem)
     map("n", notion.opts.keys.editKey, editItem)
     map("n", notion.opts.keys.openNotion, openNotion)
-    map("n", notion.opts.keys.itemAdd, addItem)
     map("n", notion.opts.keys.viewKey, viewItem)
+    map("n", notion.opts.keys.remindKey, remind)
 
     return true
 end
