@@ -39,10 +39,6 @@ end
 
 --Gets date as comparable (integer)
 M.getDate = function(v)
-    if v.properties.Dates == nil or v.properties.Dates.date == vim.NIL or v.properties.Dates.date.start == nil then
-        return
-        "No Date"
-    end
     local str = v.properties.Dates.date.start
     local date = str:gsub("-", ""):gsub("T", ""):gsub(":", ""):gsub("+", "")
 
@@ -93,12 +89,13 @@ M.earliest = function(opts)
     local biggestDate = " "
     local data
     for _, v in pairs(content) do
-        if v.properties.Dates ~= nil and v.properties.Dates.date ~= vim.NIL and v.properties.Dates.date.start ~= nil then
-            local final = M.getDate(v)
-
-            if (final < biggestDate or data == nil) and final > vim.fn.strftime("%Y%m%d") then
-                biggestDate = final
-                data = v
+        for i, k in pairs(v.properties) do
+            if k.type == "date" and k.date ~= nil and k.date.start ~= nil then
+                local final = (k.date.start):gsub("-", ""):gsub("T", ""):gsub(":", ""):gsub("+", "")
+                if (final < biggestDate or data == nil) and final > vim.fn.strftime("%Y%m%d") and final ~= "" and final ~= " " then
+                    biggestDate = final
+                    data = v
+                end
             end
         end
     end
@@ -113,7 +110,6 @@ M.eventList = function(opts)
     for _, v in pairs(content) do
         if v == vim.NIL or v.parent == vim.NIL then return end
         if v.parent.type == "database_id" then
-            vim.print("added databse element")
             local added = false
             for i, k in pairs(v.properties) do
                 if k.type == "title" and added == false and k.title[1] ~= nil and k.title[1].plain_text ~= nil then
@@ -125,7 +121,6 @@ M.eventList = function(opts)
                 end
             end
         elseif v.parent.type == "page_id" then
-            vim.print('added page element')
             table.insert(data, {
                 displayName = v.properties.title.title[1].plain_text,
                 id = v.id
