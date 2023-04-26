@@ -111,16 +111,23 @@ M.eventList = function(opts)
     local content = vim.json.decode(opts).results
     local data = {}
     for _, v in pairs(content) do
-        --Get the event for database entries
-        if v.properties ~= nil and v.properties.Name ~= nil and v.properties.Name.title[1] ~= nil and (v.parent.type == "database_id" or v.parent.type == "page_id") then
+        if v == vim.NIL or v.parent == vim.NIL then return end
+        if v.parent.type == "database_id" then
+            vim.print("added databse element")
+            local added = false
+            for i, k in pairs(v.properties) do
+                if k.type == "title" and added == false and k.title[1] ~= nil and k.title[1].plain_text ~= nil then
+                    table.insert(data, {
+                        displayName = k.title[1].plain_text,
+                        id = v.id
+                    })
+                    added = true
+                end
+            end
+        elseif v.parent.type == "page_id" then
+            vim.print('added page element')
             table.insert(data, {
-                displayName = v.properties.Name.title[1].text.content,
-                id = v.id
-            })
-            --Get the event for pages
-        elseif v.properties.title ~= nil and v.properties.title.title[1] ~= nil and v.properties.title.title[1].text ~= nil and (v.parent.type == "page_id" or v.parent.type == "database_id") then
-            table.insert(data, {
-                displayName = v.properties.title.title[1].text.content,
+                displayName = v.properties.title.title[1].plain_text,
                 id = v.id
             })
         end
