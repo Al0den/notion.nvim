@@ -88,7 +88,7 @@ end
 
 --Returns the earliest event as a block
 M.earliest = function(opts)
-    if opts == " " or opts == nil then return vim.err_writeln("[Notion] Unexpected argument") end
+    if opts == " " or not opts then return vim.err_writeln("[Notion] Unexpected argument") end
     local content = (vim.json.decode(opts)).results
     local biggestDate = " "
     local data
@@ -97,7 +97,7 @@ M.earliest = function(opts)
             local _, date = pcall(getDate, k)
             if date then
                 date = date:gsub("-", ""):gsub("T", ""):gsub(":", ""):gsub("+", "")
-                if (date > biggestDate or data == nil) and date > vim.fn.strftime("%Y%m%d") then
+                if (date > biggestDate or not data) and date > vim.fn.strftime("%Y%m%d") then
                     biggestDate = date
                     data = v
                 end
@@ -109,7 +109,7 @@ end
 
 --Get list of event - Only supports databse entries and pages
 M.eventList = function(opts)
-    if opts == " " or opts == nil then return nil end
+    if opts == " " or not opts then return end
     local content = vim.json.decode(opts).results
     local data = {}
     for _, v in pairs(content) do
@@ -117,7 +117,7 @@ M.eventList = function(opts)
         if v.parent.type == "database_id" then
             local added = false
             for i, k in pairs(v.properties) do
-                if k.type == "title" and added == false and k.title[1] ~= nil and k.title[1].plain_text ~= nil then
+                if k.type == "title" and not added and k.title[1] and k.title[1].plain_text then
                     table.insert(data, {
                         displayName = k.title[1].plain_text,
                         id = v.id
@@ -147,7 +147,7 @@ M.eventPreview = function(data)
         if v.type == "date" then
             table.insert(final, i .. ": " .. M.displayDate(v.date.start))
             table.insert(final, " ")
-        elseif v.type == "select" and v.select ~= nil then
+        elseif v.type == "select" and v.select then
             table.insert(final, i .. ": " .. v.select.name)
             table.insert(final, " ")
         elseif v.type == "multi_select" then
@@ -166,7 +166,7 @@ M.eventPreview = function(data)
         elseif v.type == "url" and v.url ~= vim.NIL then
             table.insert(final, i .. ": " .. v.url)
             table.insert(final, " ")
-        elseif v.type == "people" and v.people[1] ~= nil then
+        elseif v.type == "people" and v.people[1] then
             table.insert(final, i .. ": " .. v.people[1].name)
             table.insert(final, " ")
         end

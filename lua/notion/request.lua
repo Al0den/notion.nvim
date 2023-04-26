@@ -31,7 +31,7 @@ M.request = function(callback, window)
             else
                 vim.print("[Notion] Error calling API, code: " .. code)
             end
-            if window ~= nil then
+            if window then
                 vim.schedule(function()
                     require "notion.window".close(window)
                 end)

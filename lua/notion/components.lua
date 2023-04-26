@@ -12,7 +12,7 @@ end
 --Get the name of the next event
 M.nextEventName = function()
     local data = getEarliestData()
-    if data == nil then return "No Events" end
+    if not data then return "No Events" end
     return data.properties.Name.title[1].plain_text
 end
 
@@ -23,7 +23,7 @@ end
 --Get the date of future event
 M.nextEventDate = function()
     local data = getEarliestData()
-    if data == nil then return " " end
+    if not data then return " " end
     for i, v in pairs(data.properties) do
         if v.type == "date" then
             return parser.displayDate(v.date.start)
@@ -35,7 +35,7 @@ end
 --Get a shorter, more display efficient date
 M.nextEventShortDate = function()
     local data = getEarliestData()
-    if data == nil then return " " end
+    if not data then return " " end
     for i, v in pairs(data.properties) do
         if v.type == "date" then
             return parser.displayShortDate(v.date.start)

@@ -239,7 +239,7 @@ M.databaseEntry = function(data, id, silent)
     for i, v in pairs(data.properties) do
         if v.type == "title" and v.title[1] ~= vim.NIL then
             ftext = ftext .. "**" .. i .. "**: " .. v.title[1].plain_text .. "\n"
-        elseif v.type == "select" and v.select ~= nil then
+        elseif v.type == "select" and v.select then
             ftext = ftext .. "**" .. i .. "**: " .. v.select.name .. "\n"
         elseif v.type == "multi_select" then
             local temp = {}
@@ -253,7 +253,7 @@ M.databaseEntry = function(data, id, silent)
             ftext = ftext .. "**" .. i .. "**: " .. v.email .. "\n"
         elseif v.type == "url" and v.url ~= vim.NIL then
             ftext = ftext .. "**" .. i .. "**: " .. v.url .. "\n"
-        elseif v.type == "people" and v.people[1] ~= nil then
+        elseif v.type == "people" and v.people[1] then
             ftext = ftext .. "**" .. i .. "**: " .. v.people[1].name .. "\n"
         end
     end

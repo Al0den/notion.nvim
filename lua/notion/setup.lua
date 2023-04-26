@@ -5,7 +5,7 @@ local curl = require "plenary.curl"
 
 --Saves the current key status for next neovim open
 local saveStatus = function()
-    if status == true then
+    if status then
         require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/prev.txt", "true")
     end
 end
@@ -45,8 +45,8 @@ end
 --Function linked to NotionSetup
 local notionSetup = function()
     local content = require "notion".readFile(vim.fn.stdpath("data") .. "/notion/data.txt")
-    if content == nil or content == "" or content == " " then
-        if os.getenv("NOTION_API_KEY") ~= nil then
+    if not content or content == "" or content == " " then
+        if os.getenv("NOTION_API_KEY") then
             require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/data.txt", os.getenv("NOTION_API_KEY"))
             if tryKey() then noKey() end
         else

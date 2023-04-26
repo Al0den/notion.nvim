@@ -54,11 +54,11 @@ M.update = function(opts)
 
     local window = nil
 
-    if opts.silent == false and M.opts.notification == true then
+    if not opts.silent and M.opts.notification then
         window = require "notion.window".create("Updating")
     end
 
-    if opts.window ~= nil then
+    if opts.window then
         window = opts.window
     end
 

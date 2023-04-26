@@ -72,7 +72,7 @@ local remind = function(prompt_bufnr)
     end
     local path = vim.fn.stdpath("data") .. '/notion/reminders.txt'
     local file = io.open(path, "a")
-    if file == nil then return vim.notify("[Notion] Setup is incomplete") end
+    if not file then return vim.notify("[Notion] Setup is incomplete") end
     file:write(date .. "T" .. min_hour .. " " .. selection.value.displayName .. "\n")
     vim.print("[Notion] Reminder set for " .. date .. " at " .. min_hour)
 end
@@ -109,7 +109,7 @@ M.openMenu = function(opts)
 
     local initData = notion.raw()
     local data = parser.eventList(initData)
-    if data == nil then return end
+    if not data then return end
 
     --Initialise and show picker
     pickers.new(opts, {
