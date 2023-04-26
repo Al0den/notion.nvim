@@ -82,6 +82,10 @@ M.displayShortDate = function(inputDate)
     end
 end
 
+local getDate = function(k)
+    return k.date.start
+end
+
 --Returns the earliest event as a block
 M.earliest = function(opts)
     if opts == " " or opts == nil then return vim.err_writeln("[Notion] Unexpected argument") end
@@ -89,11 +93,12 @@ M.earliest = function(opts)
     local biggestDate = " "
     local data
     for _, v in pairs(content) do
-        for i, k in pairs(v.properties) do
-            if k.type == "date" and k.date ~= nil and k.date.start ~= nil then
-                local final = (k.date.start):gsub("-", ""):gsub("T", ""):gsub(":", ""):gsub("+", "")
-                if (final < biggestDate or data == nil) and final > vim.fn.strftime("%Y%m%d") and final ~= "" and final ~= " " then
-                    biggestDate = final
+        for _, k in pairs(v.properties) do
+            local _, date = pcall(getDate, k)
+            if date then
+                date = date:gsub("-", ""):gsub("T", ""):gsub(":", ""):gsub("+", "")
+                if (date > biggestDate or data == nil) and date > vim.fn.strftime("%Y%m%d") then
+                    biggestDate = date
                     data = v
                 end
             end
