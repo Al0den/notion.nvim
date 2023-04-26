@@ -37,14 +37,6 @@ M.parseISO8601Date = function(isoDate)
         (tonumber(timezone) or timezone)
 end
 
---Gets date as comparable (integer)
-M.getDate = function(v)
-    local str = v.properties.Dates.date.start
-    local date = str:gsub("-", ""):gsub("T", ""):gsub(":", ""):gsub("+", "")
-
-    return date
-end
-
 --Returns full display date of the notion event
 M.displayDate = function(inputDate)
     local year, month, day, hour, minute, second, timezone, timezoneValue = M.parseISO8601Date(inputDate)
