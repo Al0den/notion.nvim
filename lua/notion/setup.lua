@@ -3,13 +3,6 @@ local M = {}
 local status = false
 local curl = require "plenary.curl"
 
---Saves the current key status for next neovim open
-local saveStatus = function()
-    if status then
-        require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/prev.txt", "true")
-    end
-end
-
 --Try a key synchronously
 local tryKey = function()
     local l = require "notion".readFile(vim.fn.stdpath("data") .. "/notion/data.txt")
@@ -26,8 +19,10 @@ local tryKey = function()
 
     if res.status == 401 then return true end
     vim.print("[Notion] Status: Operational")
+
+    require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/prev.txt", "true")
     status = true
-    saveStatus()
+
     vim.schedule(function()
         require "notion".update({ silent = false })
     end)

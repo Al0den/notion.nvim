@@ -17,8 +17,6 @@ local removeIDs = function(properties)
     return properties
 end
 
-M.removeIDs = removeIDs
-
 --Executed on editor save
 local function onSave()
     if vim.api.nvim_buf_get_var(0, "owner") ~= "notionJson" then return end
@@ -267,4 +265,5 @@ M.databaseEntry = function(data, id, silent)
     createFile(ftext, data, data.id)
 end
 
+M.removeIDs = removeIDs
 return M
