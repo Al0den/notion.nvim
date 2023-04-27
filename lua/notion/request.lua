@@ -94,7 +94,7 @@ M.getChildren = function(id, callback)
 end
 
 --Save a page with the new information provided
-M.savePage = function(data, id)
+M.savePage = function(data, id, window)
     local l = require "notion".readFile(storage)
     local job = Job:new({
         command = 'curl',
@@ -112,6 +112,7 @@ M.savePage = function(data, id)
                 if ans.object == "error" then
                     vim.print(b._stdout_results[1])
                 end
+                vim.schedule(function() require "notion.window".close(window) end)
             else
                 vim.print(b._stdout_results[1].message or code)
             end

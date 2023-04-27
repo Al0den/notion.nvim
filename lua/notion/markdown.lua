@@ -12,7 +12,6 @@ local removeIDs = function(properties)
                 value.id = nil
             end
         end
-        v.type = nil
         v.id = nil
     end
     return properties
@@ -21,8 +20,7 @@ end
 --Executed on editor save
 local function onSave()
     if vim.api.nvim_buf_get_var(0, "owner") ~= "notionJson" then return end
-    local new = require "notion".readFile(vim.fn.stdpath("data") .. "/notion/tempJson.json")
-    new = string.gsub(new, "\n", "")
+    local new = string.gsub(require "notion".readFile(vim.fn.stdpath("data") .. "/notion/tempJson.json"), "\n", "")
     local data = vim.json.decode(new)
     local id = require "notion".readFile(vim.fn.stdpath("data") .. "/notion/id.txt")
     if type == "page" then
@@ -42,7 +40,8 @@ local function onSave()
             end
         end, { ["repeat"] = #temp })
     elseif type == "databaseEntry" then
-        require "notion.request".savePage('{"properties": ' .. vim.json.encode(data) .. "}", id)
+        local window = require "notion.window".create("Updating: 1/1")
+        require "notion.request".savePage('{"properties": ' .. vim.json.encode(data) .. "}", id, window)
     end
 end
 

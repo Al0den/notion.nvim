@@ -56,7 +56,6 @@ M.displayDate = function(inputDate)
     return humanReadableDate
 end
 
-
 -- Returns only the time of day of the notion event
 M.displayShortDate = function(inputDate)
     local year, month, day, hour, minute, _, _, _ = M.parseISO8601Date(inputDate)
@@ -89,7 +88,7 @@ M.earliest = function(opts)
             local _, date = pcall(getDate, k)
             if date then
                 date = date:gsub("-", ""):gsub("T", ""):gsub(":", ""):gsub("+", "")
-                if (date > biggestDate or not data) and date > vim.fn.strftime("%Y%m%d") then
+                if (date < biggestDate or not data) and date > vim.fn.strftime("%Y%m%d") then
                     biggestDate = date
                     data = v
                 end
