@@ -1,4 +1,5 @@
 local M = {}
+local markdownParser = require "notion.markdown"
 
 --Get the full object and its type from its ID (NoteL type shouldnt be required, but simplifies and makes the code breath)
 M.objectFromID = function(id)
@@ -17,7 +18,6 @@ end
 --Converts notion objects to markdown
 M.notionToMarkdown = function(selection)
     local data = M.objectFromID(selection.value.id)
-    local markdownParser = require "notion.markdown"
     if data.object == "database_id" then
         return markdownParser.databaseEntry(data.result, selection.value.id, false)
     elseif data.object == "page_id" then
@@ -137,30 +137,27 @@ M.eventPreview = function(data)
     for i, v in pairs(block.properties) do
         if v.type == "date" then
             table.insert(final, i .. ": " .. M.displayDate(v.date.start))
-            table.insert(final, " ")
         elseif v.type == "select" and v.select then
             table.insert(final, i .. ": " .. v.select.name)
-            table.insert(final, " ")
         elseif v.type == "multi_select" then
             local temp = {}
             for _, j in pairs(v.multi_select) do
                 table.insert(temp, j.name)
             end
             table.insert(final, i .. ": " .. table.concat(temp, ", "))
-            table.insert(final, " ")
         elseif v.type == "number" and v.number ~= vim.NIL then
             table.insert(final, i .. ": " .. v.number)
-            table.insert(final, " ")
         elseif v.type == "email" and v.email ~= vim.NIL then
             table.insert(final, i .. ": " .. v.email)
-            table.insert(final, " ")
         elseif v.type == "url" and v.url ~= vim.NIL then
             table.insert(final, i .. ": " .. v.url)
-            table.insert(final, " ")
         elseif v.type == "people" and v.people[1] then
             table.insert(final, i .. ": " .. v.people[1].name)
-            table.insert(final, " ")
+        else
+            goto continue
         end
+        table.insert(final, " ")
+        ::continue::
     end
 
     return final
