@@ -162,6 +162,7 @@ M.eventPreview = function(data)
 
     local data, previous = pcall(require "notion".readFile, vim.fn.stdpath("data") .. "/notion/data/" .. block.id)
 
+    --Display potential saved data that was stored on previous load
     if data then
         local toWrite = require "notion.markdown".removeChildrenTrash(vim.json.decode(previous).results)
         require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/tempJson.json", vim.json.encode(toWrite))
@@ -237,6 +238,7 @@ M.eventPreview = function(data)
         parseBlocks(response)
     end
 
+    --Returns object containing all display preview lines
     return final
 end
 
