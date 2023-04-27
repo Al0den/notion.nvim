@@ -159,13 +159,16 @@ M.eventPreview = function(data)
         table.insert(final, " ")
         ::continue::
     end
+
     local data, previous = pcall(require "notion".readFile, vim.fn.stdpath("data") .. "/notion/data/" .. block.id)
 
     if data then
         local toWrite = require "notion.markdown".removeChildrenTrash(vim.json.decode(previous).results)
         require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/tempJson.json", vim.json.encode(toWrite))
         require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/staticJson.json", vim.json.encode(toWrite))
+
         local response = (vim.json.decode(previous)).results
+
         local function parseRichText(richText)
             local markdown = ""
             for _, value in ipairs(richText) do
@@ -204,23 +207,15 @@ M.eventPreview = function(data)
                 end
                 if block.type == "heading_1" then
                     table.insert(final, "# " .. parseRichText(block.heading_1.rich_text))
-                    table.insert(final, "")
-                    prevBlock = block.type
                 elseif block.type == "heading_2" then
-                    prevBlock = block.type
                     table.insert(final, "## " .. parseRichText(block.heading_2.rich_text))
-                    table.insert(final, "")
                 elseif block.type == "heading_3" then
-                    prevBlock = nil
                     table.insert(final, "### " .. parseRichText(block.heading_3.rich_text))
-                    table.insert(final, "")
                 elseif block.type == "paragraph" then
-                    prevBlock = nil
                     table.insert(final, parseRichText(block.paragraph.rich_text))
-                    table.insert(final, "")
                 elseif block.type == "bulleted_list_item" then
-                    prevBlock = block.type
                     table.insert(final, "- " .. parseRichText(block.bulleted_list_item.rich_text))
+                    goto next
                 elseif block.type == "numbered_list_item" then
                     if prevBlock == "numbered_list_item" then
                         numbered_list_counter = numbered_list_counter + 1
@@ -229,10 +224,13 @@ M.eventPreview = function(data)
                     end
                     table.insert(final,
                         numbered_list_counter .. ". " .. parseRichText(block.numbered_list_item.rich_text))
+                    goto next
                 elseif block.type == "toggle" then
                     table.insert(final, "<details><summary>" .. parseRichText(block.toggle.rich_text) .. "</summary>")
-                    table.insert(final, "")
                 end
+                table.insert(final, "")
+                ::next::
+                prevBlock = block.type
             end
             return data
         end
