@@ -17,7 +17,7 @@ local tryKey = function()
         headers = headers
     })
 
-    if res.status == 401 then return true end
+    if res.status == 401 then return false end
     vim.print("[Notion] Status: Operational")
 
     require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/prev.txt", "true")
@@ -26,13 +26,14 @@ local tryKey = function()
     vim.schedule(function()
         require "notion".update({ silent = false })
     end)
+    return true
 end
 
 --When a key is not set/invalid
 local noKey = function()
     local newKey = vim.fn.input("Api key invalid/not set, insert new key:", "", "file")
     require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/data.txt", newKey)
-    if tryKey() then
+    if not tryKey() then
         return vim.print("[Notion] Invalid key, please try again")
     end
 end
@@ -43,12 +44,12 @@ local notionSetup = function()
     if not content or content == "" or content == " " then
         if os.getenv("NOTION_API_KEY") then
             require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/data.txt", os.getenv("NOTION_API_KEY"))
-            if tryKey() then noKey() end
+            if not tryKey() then noKey() end
         else
             noKey()
         end
     else
-        if tryKey() then noKey() end
+        if not tryKey() then noKey() end
     end
 end
 
