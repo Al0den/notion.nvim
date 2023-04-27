@@ -8,7 +8,6 @@ View, edit and update your notion pages and database entries from inside neovim,
 
 ### Menu
 ![image](https://user-images.githubusercontent.com/111601320/232697205-df41c239-bdd0-40e7-800c-3a9bb9f5bf06.jpeg)
-
 ### Markdown 
 ![image](https://user-images.githubusercontent.com/111601320/232716446-96a696b3-9df4-4b4f-848f-ee76c15af61b.jpeg)
 ### Database entry modification
@@ -148,7 +147,6 @@ Note: `update` is asynchronous, and as such the data will take a bit of time to 
 ## Roadmap
 
 - Add addItem key 
-- Add reminder notifications
 - Add support for nvim-notify (Not in the near future)
 - Improve deleting as to force deleting in saved data rather than force api update (Not in the near future)
 
