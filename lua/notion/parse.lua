@@ -167,8 +167,4 @@ M.eventPreview = function(data)
     return final
 end
 
-M.databaseName = function(object)
-    return object.icon.emoji .. " " .. object.title.text.content
-end
-
 return M

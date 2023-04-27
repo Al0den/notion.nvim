@@ -17,6 +17,5 @@ M.delays = {
 }
 M.notification = true
 M.editor = "light"
-M.databaseName = "Name"
 
 return M
