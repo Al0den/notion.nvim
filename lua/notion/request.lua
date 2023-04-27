@@ -84,6 +84,8 @@ M.getChildren = function(id, callback)
         on_exit = function(b, code)
             if code == 0 then
                 callback(b._stdout_results[1])
+                os.execute("touch " .. vim.fn.stdpath("data") .. "/notion/data/" .. id)
+                require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/data/" .. id, b._stdout_results[1])
             else
                 vim.print("[Notion] Error calling api, code: " .. code)
             end

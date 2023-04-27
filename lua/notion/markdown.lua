@@ -17,6 +17,8 @@ local removeIDs = function(properties)
     return properties
 end
 
+M.removeIDs = removeIDs
+
 --Executed on editor save
 local function onSave()
     if vim.api.nvim_buf_get_var(0, "owner") ~= "notionJson" then return end
@@ -135,6 +137,7 @@ local removeChildrenTrash = function(childs)
     return childs
 end
 
+M.removeChildrenTrash = removeChildrenTrash
 
 --Transfom a page into markdown
 M.page = function(data, id, silent)

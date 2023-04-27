@@ -81,7 +81,8 @@ local function initialiseFiles()
     os.execute("touch " .. path .. "temp.md")
     os.execute("touch " .. path .. "tempData.txt")
     os.execute("touch " .. path .. "tempJson.json")
-    os.execute("touch " .. path .. 'reminders.txt')
+    os.execute("touch " .. path .. "reminders.txt")
+    os.execute("mkdir -p " .. path .. "data/")
 end
 
 M.fileInit = initialiseFiles
