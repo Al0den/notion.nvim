@@ -42,30 +42,6 @@ M.request = function(callback, window)
     job:start()
 end
 
---Get database object from its ID
-M.resolveDatabase = function(id, callback)
-    local l = require "notion".readFile(storage)
-
-    local job = Job:new({
-        command = 'curl',
-        args = {
-            '-H', 'Authorization: Bearer ' .. l,
-            '-H', 'Notion-Version: 2022-06-28',
-            'https://api.notion.com/v1/databases/' .. id
-        },
-        enabled_recording = true,
-        on_exit = function(b, code)
-            if code == 0 then
-                callback(b._stdout_results[1])
-            else
-                vim.print("[Notion] Error calling API, code: " .. code)
-            end
-        end,
-    })
-
-    job:start()
-end
-
 --Delete item from Notion
 M.deleteItem = function(id, window)
     local l = require "notion".readFile(storage)
