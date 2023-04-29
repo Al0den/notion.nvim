@@ -5,8 +5,10 @@ local req = require "notion.request"
 
 local initialized = false
 
-M.lastUpdate = os.time()
+--Previous update time
+M.lastUpdate = 0
 
+--Read specific file
 M.readFile = function(filename)
     local f = assert(io.open(filename, "r"))
     local content = f:read("*a")
@@ -14,6 +16,7 @@ M.readFile = function(filename)
     return content
 end
 
+--Force write in specified file path
 M.writeFile = function(filename, content)
     local f = assert(io.open(filename, "w"))
     f:write(content)
@@ -30,7 +33,7 @@ M.checkInit = function()
     return true
 end
 
---Save status for next neovim log in
+--Save status for next neovim login
 local prevStatus = function()
     if M.readFile(vim.fn.stdpath("data") .. "/notion/prev.txt") == "true" then
         initialized = true
