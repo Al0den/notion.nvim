@@ -6,7 +6,7 @@ local req = require "notion.request"
 local initialized = false
 
 --Previous update time
-M.lastUpdate = 0
+M.lastUpdate = os.time()
 
 --Read specific file
 M.readFile = function(filename)
@@ -145,6 +145,8 @@ end
 
 --Give updates about current status
 M.status = function()
+    if not M.checkInit() then return end
+
     local str = "[Notion] Last Update: " .. os.difftime(os.time(), M.lastUpdate) .. " seconds ago"
     vim.print(str)
 end

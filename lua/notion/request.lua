@@ -5,6 +5,8 @@ local M = {}
 
 --Makes an asynchronous request to the Notion API, and calls the `callback` with the output
 M.request = function(callback, window)
+    if not require "notion".checkInit() then return end
+
     local l = require "notion".readFile(storage)
 
     local data = {
@@ -44,6 +46,8 @@ end
 
 --Delete item from Notion
 M.deleteItem = function(id, window)
+    if not require "notion".checkInit() then return end
+
     local l = require "notion".readFile(storage)
 
     local job = Job:new({
@@ -71,6 +75,8 @@ end
 
 --Get childrens of particular block ID
 M.getChildren = function(id, callback)
+    if not require "notion".checkInit() then return end
+
     local l = require "notion".readFile(storage)
 
     local job = Job:new({
@@ -97,6 +103,8 @@ end
 
 --Save a page with the new information provided
 M.savePage = function(data, id, window)
+    if not require "notion".checkInit() then return end
+
     local l = require "notion".readFile(storage)
     local job = Job:new({
         command = 'curl',
@@ -125,6 +133,8 @@ M.savePage = function(data, id, window)
 end
 
 M.saveBlock = function(data, id)
+    if not require "notion".checkInit() then return end
+
     local l = require "notion".readFile(storage)
     local job = Job:new({
         command = 'curl',

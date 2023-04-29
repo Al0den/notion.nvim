@@ -103,6 +103,8 @@ end
 
 --Opens the notion menu
 M.openMenu = function(opts)
+    if not require "notion".checkInit() then return end
+
     opts = opts or {}
 
     if not notion.checkInit() then return end
