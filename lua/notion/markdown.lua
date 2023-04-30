@@ -3,13 +3,23 @@ local M = {}
 local type
 
 --Remove id's
-local removeIDs = function(properties)
+local removeDatabaseTrash = function(properties)
     for i, v in pairs(properties) do
         if v.type == "select" then
             properties[i].select.id = nil
         elseif v.type == "multi_select" then
             for _, value in ipairs(v.multi_select) do
                 value.id = nil
+            end
+        elseif v.type == "title" then
+            for j, k in pairs(v.title) do
+                k.plain_text = nil
+                if require "notion".opts.editor == "light" then
+                    k.annotations = nil
+                    k.href = nil
+                    k.type = nil
+                    k.text.link = nil
+                end
             end
         end
         v.id = nil
@@ -258,12 +268,13 @@ M.databaseEntry = function(data, id, silent)
         end
     end
     require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/tempJson.json",
-        vim.json.encode(removeIDs(data.properties)))
+        vim.json.encode(removeDatabaseTrash(data.properties)))
 
     type = "databaseEntry"
     if silent then return ftext end
     createFile(ftext, data, data.id)
 end
 
-M.removeIDs = removeIDs
+M.removeIDs = removeDatabaseTrash
+
 return M
