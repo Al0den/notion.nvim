@@ -117,7 +117,6 @@ M.savePage = function(data, id, window)
             '--data', data,
         },
         on_exit = function(b, code)
-            vim.print(b._stdout_results)
             if code == 0 and b._stdout_results[1].object ~= "error" then
                 local ans = vim.json.decode(b._stdout_results[1])
                 if ans.object == "error" then
