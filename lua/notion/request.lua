@@ -134,6 +134,7 @@ M.savePage = function(data, id, window)
     job:start()
 end
 
+--Save a block to the API
 M.saveBlock = function(data, id)
     if not require "notion".checkInit() then return end
 
