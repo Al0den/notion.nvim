@@ -1,6 +1,18 @@
 local M = {}
 local markdownParser = require "notion.markdown"
 
+--Receives data from the functions of "request" and forces the new data into storage
+M.override = function(data)
+    local previousData = vim.json.decode(require "notion".raw())
+    vim.print(data.id)
+    for i, v in ipairs(previousData.results) do
+        if v.id == data.id then
+            previousData.results[i] = data
+        end
+    end
+    require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/saved.txt", vim.json.encode(previousData))
+end
+
 --Get the full object and its type from its ID (NoteL type shouldnt be required, but simplifies and makes the code breath)
 M.objectFromID = function(id)
     local raw = vim.json.decode(require "notion".raw()).results

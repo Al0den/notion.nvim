@@ -117,10 +117,13 @@ M.savePage = function(data, id, window)
             '--data', data,
         },
         on_exit = function(b, code)
+            vim.print(b._stdout_results)
             if code == 0 and b._stdout_results[1].object ~= "error" then
                 local ans = vim.json.decode(b._stdout_results[1])
                 if ans.object == "error" then
                     vim.print(b._stdout_results[1])
+                else
+                    require "notion.parse".override(ans)
                 end
                 vim.schedule(function() require "notion.window".close(window) end)
             else
@@ -151,6 +154,8 @@ M.saveBlock = function(data, id)
                 local ans = vim.json.decode(b._stdout_results[1])
                 if ans.object == "error" then
                     vim.print(b._stdout_results[1])
+                else
+                    require "notion.parse".override(ans)
                 end
             else
                 vim.print(code)
