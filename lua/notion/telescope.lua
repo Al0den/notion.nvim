@@ -114,7 +114,7 @@ M.openMenu = function(opts)
     if not data then return end
 
     --Initialise and show picker
-    pickers.new(opts, {
+    local picker = pickers.new(opts, {
         prompt_title = "Notion Event's",
         finder = finders.new_table {
             results = data,
@@ -135,6 +135,8 @@ M.openMenu = function(opts)
             end
         }
     }):find()
+
+    return picker
 end
 
 return M
