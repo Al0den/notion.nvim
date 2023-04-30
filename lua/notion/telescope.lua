@@ -19,7 +19,6 @@ local deleteItem = function(prompt_bufnr)
 
     local window = require "notion.window".create("Deleting")
     request.deleteItem(selection.value.id, window)
-    notion.update({ silent = true, window = nil })
 end
 
 --Function linked to edit key, opens a markdown file with content if possible
