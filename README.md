@@ -126,7 +126,7 @@ In it's current state, two things can happen when calling the viewKey or editKey
 
 Currently not caching or auto-updating page childrens as to not overwhelm the API, as a new API call would anyways be needed on key press to get the latest information
 
-Pressing deleteKey when hovering over an event will delete an item from Notion. Note that once deleted, it will try to update the saved data straight away, but re-opening the menu fast may still show the event
+Pressing deleteKey when hovering over an event will attempt to delete block from notion, and instantly delete it from raw saved data on success
 
 Pressing remindKey will allow you to set reminders that will send you a notification on the specified time. Works even if nvim is relaunched or closed
 ### Updates

@@ -12,6 +12,17 @@ M.override = function(data)
     require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/saved.txt", vim.json.encode(previousData))
 end
 
+--Remove entry from raw stored data
+M.removeFromData = function(id)
+    local previousData = vim.json.decode(require "notion".raw())
+    for i, k in ipairs(previousData.results) do
+        if k.id == id then
+            table.remove(previousData.results, i)
+        end
+    end
+    require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/saved.txt", vim.json.encode(previousData))
+end
+
 --Get the full object and its type from its ID (NoteL type shouldnt be required, but simplifies and makes the code breath)
 M.objectFromID = function(id)
     local raw = vim.json.decode(require "notion".raw()).results

@@ -64,6 +64,7 @@ M.deleteItem = function(id, window)
                 vim.schedule(function()
                     require "notion.window".close(window)
                 end)
+                require "notion.parse".removeFromData(id)
             else
                 print("[Notion] Error calling API, code: " .. code)
             end
