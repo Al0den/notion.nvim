@@ -36,6 +36,7 @@ local openNotion = function(prompt_bufnr)
     end
 end
 
+--Function linked to viewItem key
 local viewItem = function(prompt_bufnr)
     local selection = action_state.get_selected_entry()
     local data = parser.objectFromID(selection.value.id)
