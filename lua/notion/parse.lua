@@ -1,5 +1,44 @@
 local M = {}
 local markdownParser = require "notion.markdown"
+local va = vim.api
+
+--Get all current buffers
+local function getCurrentBuffers()
+    local bufs = vim.tbl_filter(function(t)
+        return va.nvim_buf_is_loaded(t) and vim.fn.buflisted(t)
+    end, va.nvim_list_bufs())
+    return bufs
+end
+
+--Updates the markdown if currently displayed
+M.updateMarkdown = function()
+    local buf
+    for _, buff in pairs(getCurrentBuffers()) do
+        local ok, res = pcall(va.nvim_buf_get_var, buff, "owner")
+        if ok and res == "notionMarkdown" then
+            buf = buff
+        end
+    end
+    if not buf then return end
+    local id = vim.print(va.nvim_buf_get_var(buf, "id"))
+    for i, v in ipairs((vim.json.decode(require "notion".raw())).results) do
+        if v.id == id then
+            local markdown
+            if v.parent.type == "database_id" then
+                markdown = markdownParser.databaseEntry(v, id, true)
+            elseif v.parent.type == "page_id" then
+                markdown = markdownParser.page(v, id, true)
+            else
+                return vim.print("[Notion] Problem updating event")
+            end
+            require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/temp.md", markdown)
+            local prevbuf = va.nvim_get_current_buf()
+            vim.fn.win_gotoid(vim.fn.bufwinid(buf))
+            vim.cmd("e")
+            vim.fn.win_gotoid(vim.fn.bufwinid(prevbuf))
+        end
+    end
+end
 
 --Receives data from the functions of "request" and forces the new data into storage
 M.override = function(data)
@@ -10,6 +49,7 @@ M.override = function(data)
         end
     end
     require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/saved.txt", vim.json.encode(previousData))
+    vim.schedule(function() M.updateMarkdown() end)
 end
 
 --Remove entry from raw stored data

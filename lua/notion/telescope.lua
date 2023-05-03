@@ -55,6 +55,7 @@ local viewItem = function(prompt_bufnr)
     require "notion".writeFile(path, markdown)
     vim.cmd("vsplit " .. path)
     vim.api.nvim_buf_set_var(0, "owner", "notionMarkdown")
+    vim.api.nvim_buf_set_var(0, "id", selection.value.id)
 end
 
 --Set a reminder for a specific event
