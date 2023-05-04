@@ -87,8 +87,8 @@ require"notion".setup {
         viewKey = "v"
     },
     delays = { --Delays before running specific actions
-        format = 300,
-        reminder = 200,
+        reminder = 4000,
+        format = 200,
         update = 10000
     },
     notifications = true, --Enable notifications
