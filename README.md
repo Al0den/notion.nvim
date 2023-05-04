@@ -101,6 +101,8 @@ require"notion".setup {
 }
 ```
 
+Any options can be set/unset, and if not set will default to the above
+
 ## Customisation
 
 Available lua functions are, as of right now:
