@@ -74,8 +74,9 @@ local function createFile(text, data, id)
         end
         vim.cmd(require "notion".opts.direction .. " " .. jsonPath)
         vim.api.nvim_buf_set_var(0, "owner", "notionJson")
+        local buf = vim.api.nvim_get_current_buf()
         vim.cmd('set ma')
-        vim.defer_fn(function() vim.lsp.buf.format() end, require "notion".opts.delays.format)
+        vim.defer_fn(function() vim.lsp.buf.format({ bufnr = buf }) end, require "notion".opts.delays.format)
         vim.api.nvim_create_autocmd("BufWritePost", {
             callback = onSave,
             buffer = 0

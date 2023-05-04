@@ -12,7 +12,7 @@ M.keys = {
 }
 M.delays = {
     reminder = 4000,
-    format = 300,
+    format = 200,
     update = 10000
 }
 M.notification = true
