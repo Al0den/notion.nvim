@@ -63,7 +63,16 @@ local function createFile(text, data, id)
     local jsonPath = vim.fn.stdpath("data") .. "/notion/tempJson.json"
     require "notion".writeFile(path, text)
     vim.schedule(function()
-        vim.cmd("vsplit " .. jsonPath)
+        if require "notion".opts.viewOnEdit.enabled then
+            if require "notion".opts.viewOnEdit.replace then
+                vim.cmd("edit " .. path)
+            else
+                vim.cmd(require "notion".opts.direction .. " " .. path)
+            end
+            vim.api.nvim_buf_set_var(0, "owner", "notionMarkdown")
+            vim.api.nvim_buf_set_var(0, "id", id)
+        end
+        vim.cmd(require "notion".opts.direction .. " " .. jsonPath)
         vim.api.nvim_buf_set_var(0, "owner", "notionJson")
         vim.cmd('set ma')
         vim.defer_fn(function() vim.lsp.buf.format() end, require "notion".opts.delays.format)
