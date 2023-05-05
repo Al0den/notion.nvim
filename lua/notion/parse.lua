@@ -197,9 +197,9 @@ M.eventPreview = function(data)
 
     --Display every individual property block
     for i, v in pairs(block.properties) do
-        if v.type == "date" then
+        if v.type == "date" and v.date ~= vim.NIL then
             table.insert(final, i .. ": " .. M.displayDate(v.date.start))
-        elseif v.type == "select" and v.select then
+        elseif v.type == "select" and v.select ~= vim.NIL and v.select.name ~= vim.NIL then
             table.insert(final, i .. ": " .. v.select.name)
         elseif v.type == "multi_select" then
             local temp = {}

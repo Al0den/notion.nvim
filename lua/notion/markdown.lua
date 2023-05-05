@@ -5,7 +5,7 @@ local type
 --Remove id's
 local removeDatabaseTrash = function(properties)
     for i, v in pairs(properties) do
-        if v.type == "select" then
+        if v.type == "select" and v.select ~= nil and v.select ~= vim.NIL then
             properties[i].select.id = nil
         elseif v.type == "multi_select" then
             for _, value in ipairs(v.multi_select) do
@@ -259,7 +259,7 @@ M.databaseEntry = function(data, id, silent)
     for i, v in pairs(data.properties) do
         if v.type == "title" and v.title[1] ~= vim.NIL then
             ftext = ftext .. "**" .. i .. "**: " .. v.title[1].plain_text .. "\n"
-        elseif v.type == "select" and v.select then
+        elseif v.type == "select" and v.select ~= nil and v.select ~= vim.NIL and v.select.name ~= nil and v.select.name ~= vim.NIL then
             ftext = ftext .. "**" .. i .. "**: " .. v.select.name .. "\n"
         elseif v.type == "multi_select" then
             local temp = {}
