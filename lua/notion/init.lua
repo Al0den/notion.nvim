@@ -122,16 +122,27 @@ local function checkReminders()
     require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/reminders.txt", table.concat(final, "\n"))
 end
 
+local function notion(args)
+    if args.args == "clear" then
+        clearData()
+    elseif args.args == "update" then
+        M.update()
+    elseif args.args == "setup" then
+        initialized = require "notion.setup".initialisation()
+    elseif args.args == "menu" then
+        require "notion.telescope".openMenu()
+    end
+end
+
 --Initial function
 M.setup = function(opts)
     M.opts = vim.tbl_deep_extend("force", defaults, opts or {})
-
-    vim.api.nvim_create_user_command("NotionSetup", function() initialized = require("notion.setup").initialisation() end,
-        {})
-    vim.api.nvim_create_user_command("NotionUpdate", function() M.update() end, {})
-    vim.api.nvim_create_user_command("Notion", function() require "notion.telescope".openMenu() end, {})
-    vim.api.nvim_create_user_command("NotionClear", function() clearData() end, {})
-
+    vim.api.nvim_create_user_command("Notion", notion, {
+        nargs = 1,
+        complete = function(ArgLead, CmdLine, CursorPos)
+            return { "clear", "update", "setup", "menu" }
+        end
+    })
     prevStatus()
     if not initialized then return end
 
