@@ -4,9 +4,7 @@ local parser = require "notion.parse"
 
 --Get's earliest date of a database entry
 local function getEarliestData()
-    local initData = require("notion")
-    local data = parser.earliest(initData.raw())
-    return data
+    return parser.earliest(require "notion".raw())
 end
 
 --Get the name of the next event
