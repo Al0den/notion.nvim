@@ -98,7 +98,8 @@ require"notion".setup {
         enabled = true, --Enable double window, view and edit simultaneously
         replace = true --Replace current window with preview window, only if enabled = true
     }
-    direction = "vsplit" --Direction windows will be opened in
+    direction = "vsplit", --Direction windows will be opened in
+    noEvent = "No events"
 }
 ```
 

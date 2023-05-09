@@ -10,7 +10,7 @@ end
 --Get the name of the next event
 M.nextEventName = function()
     local data = getEarliestData()
-    if not data then return "No Events" end
+    if not data then return require "notion".opts.noEvent end
     return data.properties.Name.title[1].plain_text
 end
 
@@ -27,7 +27,7 @@ M.nextEventDate = function()
             return parser.displayDate(v.date.start)
         end
     end
-    return " "
+    return false
 end
 
 --Get a shorter, more display efficient date
@@ -39,13 +39,12 @@ M.nextEventShortDate = function()
             return parser.displayShortDate(v.date.start)
         end
     end
-
-    return " "
+    return false
 end
 
 --Full user friendly string for next event
 M.nextEvent = function()
-    if M.nextEventDate() == " " then
+    if not M.nextEventDate() then
         return M.nextEventName()
     else
         return M.nextEventName() .. " - " .. M.nextEventShortDate()

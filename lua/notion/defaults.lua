@@ -22,5 +22,6 @@ M.viewOnEdit = {
     replace = true
 }
 M.direction = "vsplit"
+M.noEvent = "No Events"
 
 return M
