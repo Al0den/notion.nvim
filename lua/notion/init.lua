@@ -131,6 +131,8 @@ local function notion(args)
         initialized = require "notion.setup".initialisation()
     elseif args.args == "menu" then
         require "notion.telescope".openMenu()
+    elseif args.args == "status" then
+        require "notion".status()
     end
 end
 
@@ -140,7 +142,7 @@ M.setup = function(opts)
     vim.api.nvim_create_user_command("Notion", notion, {
         nargs = 1,
         complete = function(ArgLead, CmdLine, CursorPos)
-            return { "clear", "update", "setup", "menu" }
+            return { "clear", "update", "setup", "menu", "status" }
         end
     })
     prevStatus()
