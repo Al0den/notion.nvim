@@ -80,6 +80,7 @@ end
 
 --Executed when an option is "hovered" inside the menu
 local function attach_mappings(prompt_bufnr, map)
+    local notion = require "notion"
     --On menu click
     actions.select_default:replace(function()
         actions.close(prompt_bufnr)
@@ -139,5 +140,39 @@ M.openMenu = function(opts)
 
     return picker
 end
+
+M.openMenuTelescope = function(opts)
+    opts = opts or {}
+
+    local initData = require "notion".raw()
+    local data = parser.eventList(initData)
+
+    --Initialise and show picker
+    local picker = pickers.new(opts, {
+        prompt_title = "Notion Event's",
+        finder = finders.new_table {
+            results = data,
+            entry_maker = function(entry)
+                return {
+                    value = entry,
+                    display = entry["displayName"],
+                    ordinal = entry["displayName"],
+                }
+            end
+        },
+        sorter = conf.generic_sorter(opts),
+        attach_mappings = attach_mappings,
+        previewer = previewers.new_buffer_previewer {
+            title = "Preview",
+            define_preview = function(self, entry, status)
+                vim.api.nvim_buf_set_lines(self.state.bufnr, 0, -1, false, parser.eventPreview(entry))
+            end
+        }
+    })
+
+    return picker
+end
+
+
 
 return M
