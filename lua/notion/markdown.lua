@@ -7,6 +7,7 @@ local removeDatabaseTrash = function(properties)
     for i, v in pairs(properties) do
         if v.type == "select" and v.select ~= nil and v.select ~= vim.NIL then
             properties[i].select.id = nil
+            properties[i].select.color = nil
         elseif v.type == "multi_select" then
             for _, value in ipairs(v.multi_select) do
                 value.id = nil
