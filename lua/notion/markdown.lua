@@ -156,6 +156,7 @@ local removeChildrenTrash = function(childs)
     return childs
 end
 
+--Global access
 M.removeChildrenTrash = removeChildrenTrash
 
 --Transfom a page into markdown
