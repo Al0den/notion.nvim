@@ -85,6 +85,7 @@ local function initialiseFiles()
     os.execute("touch " .. path .. "tempData.txt")
     os.execute("touch " .. path .. "tempJson.json")
     os.execute("touch " .. path .. "reminders.txt")
+    os.execute("touch " .. path .. "currentJob.txt")
     os.execute("mkdir -p " .. path .. "data/")
 end
 
@@ -161,6 +162,8 @@ M.status = function()
     if not M.checkInit() then return end
 
     local str = "[Notion] Last Update: " .. os.difftime(os.time(), M.lastUpdate) .. " seconds ago"
+    local currentJob = M.readFile(vim.fn.stdpath("data") .. "/notion/currentJob.txt")
+    str = str .. currentJob
     vim.print(str)
 end
 

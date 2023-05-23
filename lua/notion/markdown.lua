@@ -45,9 +45,12 @@ local function onSave()
             require "notion.request".saveBlock(vim.json.encode(temp[i]), temp[i].id)
             require "notion.window".close(window)
             window = require "notion.window".create("Saving: " .. i .. "/" .. #temp)
+            require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/currentJob.txt",
+                "\nSaving data: " .. i .. "/" .. #temp)
             i = i + 1
             if i == #temp + 1 then
                 require "notion.window".close(window)
+                require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/currentJob.txt", "")
             end
         end, { ["repeat"] = #temp })
     elseif type == "databaseEntry" then
