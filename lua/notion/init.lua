@@ -143,7 +143,51 @@ M.setup = function(opts)
     vim.api.nvim_create_user_command("Notion", notion, {
         nargs = 1,
         complete = function(ArgLead, CmdLine, CursorPos)
-            return { "clear", "update", "setup", "menu", "status" }
+            function levenshtein(str1, str2)
+                -- Initialize a matrix to store the distances between substrings
+                local matrix = {}
+
+                -- Initialize the first row and column of the matrix
+                for i = 0, #str1 do
+                    matrix[i] = { [0] = i }
+                end
+                for j = 0, #str2 do
+                    matrix[0][j] = j
+                end
+
+                -- Loop through the strings and fill in the matrix
+                for i = 1, #str1 do
+                    for j = 1, #str2 do
+                        local cost = (str1:sub(i, i) == str2:sub(j, j) and 0 or 1)
+                        matrix[i][j] = math.min(matrix[i - 1][j] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j - 1] + cost)
+                    end
+                end
+
+                -- Return the final value in the matrix (the distance between the two strings)
+                return matrix[#str1][#str2]
+            end
+
+            function closest_match(target, strings)
+                -- Initialize variables to store the closest match and its distance
+                local closest, distance = nil, math.huge
+
+                -- Loop through the strings and find the one with the smallest distance
+                for _, str in pairs(strings) do
+                    local d = levenshtein(target, str)
+                    if d < distance then
+                        closest, distance = str, d
+                    end
+                end
+
+                -- Return the closest match
+                return closest
+            end
+
+            if ArgLead == "" or ArgLead == nil or ArgLead == " " then
+                return { "clear", "update", "setup", "menu", "status" }
+            else
+                return { closest_match(ArgLead, { "clear", "update", "setup", "menu", "status" }) }
+            end
         end
     })
     prevStatus()
