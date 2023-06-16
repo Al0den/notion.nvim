@@ -86,6 +86,7 @@ local function initialiseFiles()
     os.execute("touch " .. path .. "tempJson.json")
     os.execute("touch " .. path .. "reminders.txt")
     os.execute("touch " .. path .. "currentJob.txt")
+    os.execute("touch " .. path .. "prev.txt")
     os.execute("mkdir -p " .. path .. "data/")
 end
 
@@ -109,8 +110,8 @@ local function checkReminders()
     for _, k in ipairs(lines) do
         if k == "" or k == " " then break end
         local data = vim.split(k, " ")
-        local Y, M, D, H, min = data[1]:match("(%d+)%-(%d+)%-(%d+)T(%d+):(%d+)")
-        difference = os.difftime(os.time({ year = Y, month = M, day = D, hour = H, min = min }), os.time())
+        local Y, Mo, D, H, min = data[1]:match("(%d+)%-(%d+)%-(%d+)T(%d+):(%d+)")
+        local difference = os.difftime(os.time({ year = Y, month = Mo, day = D, hour = H, min = min }), os.time())
         if difference < 60 then
             data[1] = ""
             local name = table.concat(data, " ")
@@ -139,11 +140,12 @@ end
 
 --Initial function
 M.setup = function(opts)
+    initialiseFiles()
     M.opts = vim.tbl_deep_extend("force", defaults, opts or {})
     vim.api.nvim_create_user_command("Notion", notion, {
         nargs = 1,
         complete = function(ArgLead, CmdLine, CursorPos)
-            function levenshtein(str1, str2)
+            local function levenshtein(str1, str2)
                 -- Initialize a matrix to store the distances between substrings
                 local matrix = {}
 
@@ -167,7 +169,7 @@ M.setup = function(opts)
                 return matrix[#str1][#str2]
             end
 
-            function closest_match(target, strings)
+            local function closest_match(target, strings)
                 -- Initialize variables to store the closest match and its distance
                 local closest, distance = nil, math.huge
 
