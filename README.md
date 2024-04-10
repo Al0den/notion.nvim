@@ -40,6 +40,21 @@ require('tester').()
 END
 ```
 
+[**lazy**](https://github.com/folke/lazy.nvim)
+```lua
+{
+    "Al0den/notion.nvim",
+    lazy = false, --Should work when lazy loaded, not tested
+    dependencies = {
+      "nvim-telescope/telescope.nvim",
+      "nvim-lua/plenary.nvim",
+    },
+    config = function()
+        require"notion".setup()
+    end,
+},
+```
+
 ## How to use
 
 By default, the plugin simply wont do anything. Call the `:Notion ` function to initialise the plugin and enable it's features. 
