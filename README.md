@@ -42,7 +42,7 @@ END
 
 ## How to use
 
-By default, the plugin simply wont do anything. Call the `:NotionSetup` function to initialise the plugin and enable it's features. 
+By default, the plugin simply wont do anything. Call the `:Notion setup` function to initialise the plugin and enable it's features. 
 
 You will need your [Notion integration key](https://developers.notion.com), and have setup the integration to access the specific pages/databases you want to display inside of Neovim.
 
