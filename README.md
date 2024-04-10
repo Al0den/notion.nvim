@@ -36,19 +36,19 @@ use {
 Plug 'Al0den/tester.nvim'
 
 lua << END
-require('tester').setup()
+require('tester').()
 END
 ```
 
 ## How to use
 
-By default, the plugin simply wont do anything. Call the `:Notion setup` function to initialise the plugin and enable it's features. 
+By default, the plugin simply wont do anything. Call the `:Notion ` function to initialise the plugin and enable it's features. 
 
-You will need your [Notion integration key](https://developers.notion.com), and have setup the integration to access the specific pages/databases you want to display inside of Neovim.
+You will need your [Notion integration key](https://developers.notion.com), and have  the integration to access the specific pages/databases you want to display inside of Neovim.
 
 The plugin can view and edit notion pages, and as such I would recommend to allow it to do both, however only allowing view shouldnt have an impact on features unrelated to editing
 
-If your environment variable `NOTION_API_KEY` (`os.getenv("NOTION_API_KEY)`) is already set, simply running `:NotionSetup` while initialise the plugin once and for all
+If your environment variable `NOTION_API_KEY` (`os.getenv("NOTION_API_KEY)`) is already set, simply running `:Notion setup` while initialise the plugin once and for all
 
 The simplest of use is the `Notion` (`require"notion".openMenu()`), which opens a menu will all upcomings events. However, a lot of functions are exposed through the `notions.components` file.
 
