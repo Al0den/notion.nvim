@@ -168,7 +168,7 @@ require"notion".update({
 
 If you want to manually handle your notifications, `window` takes a window ID as an argument and will close said window when the action has completed
 
-Note: `update` is asynchronous, and as such the data will take a bit of time to update (<1 s usually), and `menu` will update accordingly  
+Note: `update` is asynchronous, and as such the data will be updated in the background, not instantaneously, and `menu` will update accordingly  
 
 ## Roadmap
 
