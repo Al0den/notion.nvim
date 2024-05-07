@@ -92,6 +92,7 @@ end
 local removeChildrenTrash = function(childs)
     local editorType = require "notion".opts.editor
     if editorType == "full" then return childs end
+    if childs == nil then return "" end
     for i, v in ipairs(childs) do
         v.archived = nil
         v.object = nil
@@ -176,6 +177,7 @@ M.page = function(data, id, silent)
         local response = (vim.json.decode(child)).results
         local function parseRichText(richText)
             local markdown = ""
+            if richText == nil then return "" end
             for _, value in ipairs(richText) do
                 local text = value.text.content
                 local annotations = value.annotations
