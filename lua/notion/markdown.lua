@@ -208,7 +208,7 @@ M.page = function(data, id, silent)
             local markdown = ""
             local numbered_list_counter = 1
             local prevBlock = nil
-            if blocks = nil then return "" end
+            if blocks == nil then return "" end
             for _, block in ipairs(blocks) do
                 if (prevBlock == "bulleted_list_item" and block.type ~= "bulleted_list_item") or (prevBlock == "numbered_list_item" and block.type ~= "numbered_list_item") then
                     markdown = markdown .. "\n"
