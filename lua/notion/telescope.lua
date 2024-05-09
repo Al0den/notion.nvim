@@ -54,8 +54,11 @@ local viewItem = function(prompt_bufnr)
     local path = vim.fn.stdpath("data") .. "/notion/temp.md"
     require "notion".writeFile(path, markdown)
     vim.cmd("vsplit " .. path)
-    vim.api.nvim_buf_set_var(0, "owner", "notionMarkdown")
-    vim.api.nvim_buf_set_var(0, "id", selection.value.id)
+    local buffer_number = vim.api.nvim_get_current_buf()
+    vim.api.nvim_buf_set_var(buffer_number, "owner", "notionMarkdown")
+    vim.api.nvim_buf_set_var(buffer_number, "id", selection.value.id)
+    vim.api.nvim_buf_set_option(buffer_number, "readonly", true)
+    vim.api.nvim_buf_set_option(buffer_number, "modified", false)
 end
 
 --Set a reminder for a specific event
