@@ -12,32 +12,30 @@ end
 
 --Update the currently displayed markdown
 M.updateMarkdown = function()
---    local buf
---    for _, buff in pairs(getCurrentBuffers()) do
---        local ok, res = pcall(va.nvim_buf_get_var, buff, "owner")
---        if ok and res == "notionMarkdown" then
---            buf = buff
---        end
---    end
---    if not buf then return end
---    local id = vim.print(va.nvim_buf_get_var(buf, "id"))
---    for i, v in ipairs((vim.json.decode(require "notion".raw())).results) do
---        if v.id == id then
---            local markdown
---            if v.parent.type == "database_id" then
---                markdown = markdownParser.databaseEntry(v, id, true)
---            elseif v.parent.type == "page_id" then
---                markdown = markdownParser.page(v, id, true)
---            else
---                return vim.print("[Notion] Problem updating event")
---           end
---            require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/temp.md", markdown)
---            local prevbuf = va.nvim_get_current_buf()
---            vim.fn.win_gotoid(vim.fn.bufwinid(buf))
---            vim.cmd("e")
---            vim.fn.win_gotoid(vim.fn.bufwinid(prevbuf))
---        end
---    end
+    local buf
+    for _, buff in pairs(getCurrentBuffers()) do
+        local ok, res = pcall(va.nvim_buf_get_var, buff, "owner")
+        if ok and res == "notionMarkdown" then
+            buf = buff
+        end
+    end
+    if not buf then return end
+    local id = va.nvim_buf_get_var(buf, "id")
+    for i, v in ipairs((vim.json.decode(require "notion".raw())).results) do
+        if v.id == id then
+            local markdown = ""
+            if v.parent.type == "database_id" then
+                markdown = markdownParser.databaseEntry(v, id, true, false)
+            elseif v.parent.type == "page_id" then
+                markdown = markdownParser.page(v, id, true, false)
+            else
+                return vim.print("[Notion] Problem updating event")
+            end
+            if markdown == nil or not markdown then goto continue end
+            require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/temp.md", markdown)
+            ::continue::
+        end
+    end
 end
 
 --Receives data from the functions of "request" and forces the new data into storage
@@ -81,9 +79,9 @@ end
 M.notionToMarkdown = function(selection)
     local data = M.objectFromID(selection.value.id)
     if data.object == "database_id" then
-        return markdownParser.databaseEntry(data.result, selection.value.id, false)
+        return markdownParser.databaseEntry(data.result, selection.value.id, false, true)
     elseif data.object == "page_id" then
-        return markdownParser.page(data.result, selection.value.id, false)
+        return markdownParser.page(data.result, selection.value.id, false, true)
     else
         return vim.print("[Notion] Cannot view or edit this event")
     end

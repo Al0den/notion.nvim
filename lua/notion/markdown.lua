@@ -78,6 +78,7 @@ local function createFile(text, data, id)
         end
         vim.cmd(require "notion".opts.direction .. " " .. jsonPath)
         vim.api.nvim_buf_set_var(0, "owner", "notionJson")
+        vim.api.nvim_buf_set_var(0, "id", id)
         local buf = vim.api.nvim_get_current_buf()
         vim.cmd('set ma')
         vim.defer_fn(function() vim.lsp.buf.format({ bufnr = buf }) end, require "notion".opts.delays.format)
@@ -164,7 +165,7 @@ end
 M.removeChildrenTrash = removeChildrenTrash
 
 --Transfom a page into markdown
-M.page = function(data, id, silent)
+M.page = function(data, id, silent, open)
     local ftext = " # Title: " .. data.properties.title.title[1].plain_text
     local buf = require "notion.window".create("Loading...")
     local function onChild(child)
@@ -248,21 +249,24 @@ M.page = function(data, id, silent)
 
         local markdown = parseBlocks(response)
         type = "page"
-        if silent then
-            vim.schedule(function()
-                require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/temp.md", ftext .. "\n\n" .. markdown)
+        if open then
+            createFile(ftext .. "\n\n" .. markdown, data, id)
+        end
+        vim.schedule(function()
+            require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/temp.md", ftext .. "\n\n" .. markdown)
+            if open then
                 vim.cmd("vsplit " .. vim.fn.stdpath("data") .. "/notion/temp.md")
                 vim.api.nvim_buf_set_var(0, "owner", "notionMarkdown")
-            end)
-            return
-        end
-        createFile(ftext .. "\n\n" .. markdown, data, data.id)
+                vim.api.nvim_buf_set_var(0, "id", id)
+            end
+        end)
+        return markdown
     end
     require "notion.request".getChildren(id, onChild)
 end
 
 --Transform a databse entry into markdown
-M.databaseEntry = function(data, id, silent)
+M.databaseEntry = function(data, id, silent, open)
     local ftext = ""
     for i, v in pairs(data.properties) do
         if v.type == "title" and v.title[1] ~= vim.NIL then
@@ -285,12 +289,16 @@ M.databaseEntry = function(data, id, silent)
             ftext = ftext .. "**" .. i .. "**: " .. v.people[1].name .. "\n"
         end
     end
-    require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/tempJson.json",
-        vim.json.encode(removeDatabaseTrash(data.properties)))
+    require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/tempJson.json", vim.json.encode(removeDatabaseTrash(data.properties)))
 
     type = "databaseEntry"
     if silent then return ftext end
-    createFile(ftext, data, data.id)
+    if open then
+        createFile(ftext, data, id)
+        return
+    else
+        require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/temp.md", ftext)
+    end
 end
 
 M.removeIDs = removeDatabaseTrash

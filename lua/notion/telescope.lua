@@ -44,9 +44,9 @@ local viewItem = function(prompt_bufnr)
     actions.close(prompt_bufnr)
 
     if data.object == "database_id" then
-        markdown = markdownParser.databaseEntry(data.result, selection.value.id, true)
+        markdown = markdownParser.databaseEntry(data.result, selection.value.id, true, true)
     elseif data.object == "page_id" then
-        markdown = markdownParser.page(data.result, selection.value.id, true)
+        markdown = markdownParser.page(data.result, selection.value.id, true, true)
         return
     else
         return vim.print("[Notion] Cannot view or edit this event")
