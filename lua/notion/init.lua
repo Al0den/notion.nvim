@@ -125,7 +125,9 @@ local function checkReminders()
 end
 
 local function notion(args)
-    if args.args == "clear" then
+    if args.args == "" then 
+        require "notion.telescope".openMenu()
+    elseif args.args == "clear" then
         clearData()
     elseif args.args == "update" then
         M.update()
@@ -143,13 +145,11 @@ M.setup = function(opts)
     initialiseFiles()
     M.opts = vim.tbl_deep_extend("force", defaults, opts or {})
     vim.api.nvim_create_user_command("Notion", notion, {
-        nargs = 1,
+        nargs = '?',
         complete = function(ArgLead, CmdLine, CursorPos)
             local function levenshtein(str1, str2)
-                -- Initialize a matrix to store the distances between substrings
                 local matrix = {}
 
-                -- Initialize the first row and column of the matrix
                 for i = 0, #str1 do
                     matrix[i] = { [0] = i }
                 end
@@ -157,7 +157,6 @@ M.setup = function(opts)
                     matrix[0][j] = j
                 end
 
-                -- Loop through the strings and fill in the matrix
                 for i = 1, #str1 do
                     for j = 1, #str2 do
                         local cost = (str1:sub(i, i) == str2:sub(j, j) and 0 or 1)
@@ -165,23 +164,18 @@ M.setup = function(opts)
                     end
                 end
 
-                -- Return the final value in the matrix (the distance between the two strings)
                 return matrix[#str1][#str2]
             end
 
             local function closest_match(target, strings)
-                -- Initialize variables to store the closest match and its distance
                 local closest, distance = nil, math.huge
 
-                -- Loop through the strings and find the one with the smallest distance
                 for _, str in pairs(strings) do
                     local d = levenshtein(target, str)
                     if d < distance then
                         closest, distance = str, d
                     end
                 end
-
-                -- Return the closest match
                 return closest
             end
 
