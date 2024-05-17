@@ -36,7 +36,7 @@ use {
 Plug 'Al0den/tester.nvim'
 
 lua << END
-require('tester').()
+require"notion".setup()
 END
 ```
 
