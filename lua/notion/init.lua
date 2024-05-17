@@ -27,7 +27,7 @@ end
 --Access init status from other files
 M.checkInit = function()
     if not initialized then
-        vim.print("[Notion] Not initialised, please run :NotionSetup")
+        vim.print("[Notion] Not initialised, please run :Notion setup")
         return false
     end
     return true
