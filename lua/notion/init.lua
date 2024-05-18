@@ -140,6 +140,10 @@ local function notion(args)
     end
 end
 
+M.openMenu = function()
+    require "notion.telescope".openMenu()
+end
+
 --Initial function
 M.setup = function(opts)
     initialiseFiles()
