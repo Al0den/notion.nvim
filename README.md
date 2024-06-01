@@ -116,11 +116,13 @@ require"notion".setup {
         replace = true --Replace current window with preview window, only if enabled = true
     }
     direction = "vsplit", --Direction windows will be opened in
-    noEvent = "No events"
+    noEvent = "No events",
+    debug = false --Enable some error messages on failed API calls
+    
 }
 ```
 
-Any options can be set/unset, and if not set will default to the above
+All options can be set manually, and will default to the above values
 
 ## Customisation
 
