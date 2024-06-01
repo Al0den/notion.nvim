@@ -60,7 +60,7 @@ local function onSave()
 end
 
 --Create the temporary markdown file with the given content
-local function createFile(text, data, id)
+local function createFile(text, _, id)
     local idPATH = vim.fn.stdpath("data") .. "/notion/id.txt"
     require "notion".writeFile(idPATH, id)
     local path = vim.fn.stdpath("data") .. "/notion/temp.md"
@@ -94,7 +94,7 @@ local removeChildrenTrash = function(childs)
     local editorType = require "notion".opts.editor
     if editorType == "full" then return childs end
     if childs == nil then return "" end
-    for i, v in ipairs(childs) do
+    for _, v in ipairs(childs) do
         v.archived = nil
         v.object = nil
         v.last_edited_time = nil
@@ -165,7 +165,7 @@ end
 M.removeChildrenTrash = removeChildrenTrash
 
 --Transfom a page into markdown
-M.page = function(data, id, silent, open)
+M.page = function(data, id, _, open)
     local ftext = " # Title: " .. data.properties.title.title[1].plain_text
     local buf = require "notion.window".create("Loading...")
     local function onChild(child)

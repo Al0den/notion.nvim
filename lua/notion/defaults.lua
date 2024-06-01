@@ -19,7 +19,7 @@ M.notification = true
 M.editor = "light"
 M.viewOnEdit = {
     enabled = true,
-    replace = true
+    replace = false
 }
 M.direction = "vsplit"
 M.noEvent = "No Events"

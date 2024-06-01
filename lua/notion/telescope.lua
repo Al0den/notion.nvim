@@ -28,7 +28,7 @@ local editItem = function(prompt_bufnr)
     parser.notionToMarkdown(selection)
 end
 
-local openNotion = function(prompt_bufnr)
+local openNotion = function(_)
     if require "notion".opts.open == "notion" then
         os.execute("open notion://www.notion.so")
     else
@@ -65,7 +65,6 @@ end
 local remind = function(prompt_bufnr)
     actions.close(prompt_bufnr)
     local selection = action_state.get_selected_entry()
-    local event = parser.objectFromID(selection.value.id)
     local min_hour = vim.fn.input("Time (hh:mm): ")
     local date = vim.fn.input("Date (yyyy-mm-dd): ")
     if not date or date == "" or date == " " then
@@ -83,7 +82,7 @@ end
 
 --Executed when an option is "hovered" inside the menu
 local function attach_mappings(prompt_bufnr, map)
-    local notion = require "notion"
+    local notion_ref = require "notion"
     --On menu click
     actions.select_default:replace(function()
         actions.close(prompt_bufnr)
@@ -97,11 +96,11 @@ local function attach_mappings(prompt_bufnr, map)
         end
     end)
 
-    map("n", notion.opts.keys.deleteKey, deleteItem)
-    map("n", notion.opts.keys.editKey, editItem)
-    map("n", notion.opts.keys.openNotion, openNotion)
-    map("n", notion.opts.keys.viewKey, viewItem)
-    map("n", notion.opts.keys.remindKey, remind)
+    map("n", notion_ref.opts.keys.deleteKey, deleteItem)
+    map("n", notion_ref.opts.keys.editKey, editItem)
+    map("n", notion_ref.opts.keys.openNotion, openNotion)
+    map("n", notion_ref.opts.keys.viewKey, viewItem)
+    map("n", notion_ref.opts.keys.remindKey, remind)
 
     return true
 end
@@ -135,7 +134,7 @@ M.openMenu = function(opts)
         attach_mappings = attach_mappings,
         previewer = previewers.new_buffer_previewer {
             title = "Preview",
-            define_preview = function(self, entry, status)
+            define_preview = function(self, entry, _)
                 vim.api.nvim_buf_set_lines(self.state.bufnr, 0, -1, false, parser.eventPreview(entry))
             end
         }
@@ -167,7 +166,7 @@ M.openMenuTelescope = function(opts)
         attach_mappings = attach_mappings,
         previewer = previewers.new_buffer_previewer {
             title = "Preview",
-            define_preview = function(self, entry, status)
+            define_preview = function(self, entry, _)
                 vim.api.nvim_buf_set_lines(self.state.bufnr, 0, -1, false, parser.eventPreview(entry))
             end
         }

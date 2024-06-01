@@ -21,13 +21,13 @@ M.updateMarkdown = function()
     end
     if not buf then return end
     local id = va.nvim_buf_get_var(buf, "id")
-    for i, v in ipairs((vim.json.decode(require "notion".raw())).results) do
+    for _, v in ipairs((vim.json.decode(require "notion".raw())).results) do
         if v.id == id then
             local markdown = ""
             if v.parent.type == "database_id" then
-                markdown = markdownParser.databaseEntry(v, id, true, false)
+                markdown = markdownParser.databaseEntry(v, id, true, false) or ""
             elseif v.parent.type == "page_id" then
-                markdown = markdownParser.page(v, id, true, false)
+                markdown = markdownParser.page(v, id, true, false) or ""
             else
                 return vim.print("[Notion] Problem updating event")
             end
@@ -167,7 +167,7 @@ M.eventList = function(opts)
         if v == vim.NIL or v.parent == vim.NIL then return end
         if v.parent.type == "database_id" then
             local added = false
-            for i, k in pairs(v.properties) do
+            for _, k in pairs(v.properties) do
                 if k.type == "title" and not added and k.title[1] and k.title[1].plain_text then
                     table.insert(data, {
                         displayName = k.title[1].plain_text,
@@ -259,7 +259,6 @@ M.eventPreview = function(data)
         end
 
         local function parseBlocks(blocks)
-            local markdown = ""
             local numbered_list_counter = 1
             local prevBlock = nil
             for _, block in ipairs(blocks) do

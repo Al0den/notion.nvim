@@ -157,7 +157,7 @@ M.setup = function(opts)
     M.opts = vim.tbl_deep_extend("force", defaults, opts or {})
     vim.api.nvim_create_user_command("Notion", notion, {
         nargs = '?',
-        complete = function(ArgLead, CmdLine, CursorPos)
+        complete = function(ArgLead, _, _)
             local function levenshtein(str1, str2)
                 local matrix = {}
 

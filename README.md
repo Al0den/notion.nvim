@@ -113,7 +113,7 @@ require"notion".setup {
     editor = "light", --light/medium/full, changes the amount of data displayed in editor
     viewOnEdit = {
         enabled = true, --Enable double window, view and edit simultaneously
-        replace = true --Replace current window with preview window, only if enabled = true
+        replace = false --Replace current window with preview window
     }
     direction = "vsplit", --Direction windows will be opened in
     noEvent = "No events",

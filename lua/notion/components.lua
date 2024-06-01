@@ -22,7 +22,7 @@ end
 M.nextEventDate = function()
     local data = getEarliestData()
     if not data then return " " end
-    for i, v in pairs(data.properties) do
+    for _, v in pairs(data.properties) do
         if v.type == "date" then
             return parser.displayDate(v.date.start)
         end
@@ -34,7 +34,7 @@ end
 M.nextEventShortDate = function()
     local data = getEarliestData()
     if not data then return " " end
-    for i, v in pairs(data.properties) do
+    for _, v in pairs(data.properties) do
         if v.type == "date" then
             return parser.displayShortDate(v.date.start)
         end
