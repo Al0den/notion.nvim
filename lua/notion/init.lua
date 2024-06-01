@@ -46,6 +46,13 @@ M.raw = function()
     return M.readFile(vim.fn.stdpath("data") .. "/notion/saved.txt")
 end
 
+M.error = function(str)
+    if M.opts.debug then
+        vim.print(str)
+    end
+end
+
+
 --Updates the saved data
 M.update = function(opts)
     opts = opts or {}
@@ -125,7 +132,7 @@ local function checkReminders()
 end
 
 local function notion(args)
-    if args.args == "" then 
+    if args.args == "" then
         require "notion.telescope".openMenu()
     elseif args.args == "clear" then
         clearData()

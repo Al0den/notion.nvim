@@ -31,7 +31,7 @@ M.request = function(callback, window)
             if code == 0 then
                 callback(b._stdout_results[1])
             else
-                vim.print("[Notion] Error calling API, code: " .. code)
+                require"notion".error("[Notion] Error calling API, code: " .. code)
             end
             if window then
                 vim.schedule(function()
@@ -59,14 +59,14 @@ M.deleteItem = function(id, window)
             'https://api.notion.com/v1/blocks/' .. id
         },
         enabled_recording = true,
-        on_exit = function(b, code)
+        on_exit = function(_, code)
             if code == 0 then
                 vim.schedule(function()
                     require "notion.window".close(window)
                 end)
                 require "notion.parse".removeFromData(id)
             else
-                print("[Notion] Error calling API, code: " .. code)
+                require"notion".error("[Notion] Error calling API, code: " .. code)
             end
         end,
     })
@@ -94,7 +94,7 @@ M.getChildren = function(id, callback)
                 os.execute("touch " .. vim.fn.stdpath("data") .. "/notion/data/" .. id)
                 require "notion".writeFile(vim.fn.stdpath("data") .. "/notion/data/" .. id, b._stdout_results[1])
             else
-                vim.print("[Notion] Error calling api, code: " .. code)
+                require"notion".error("[Notion] Error calling api, code: " .. code)
             end
         end
     })

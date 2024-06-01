@@ -23,5 +23,6 @@ M.viewOnEdit = {
 }
 M.direction = "vsplit"
 M.noEvent = "No Events"
+M.debug = false
 
 return M

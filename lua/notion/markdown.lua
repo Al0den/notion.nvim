@@ -13,7 +13,7 @@ local removeDatabaseTrash = function(properties)
                 value.id = nil
             end
         elseif v.type == "title" then
-            for j, k in pairs(v.title) do
+            for _, k in pairs(v.title) do
                 k.plain_text = nil
                 if require "notion".opts.editor == "light" then
                     k.annotations = nil
