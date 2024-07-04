@@ -18,7 +18,7 @@ M.delays = {
 M.notification = true
 M.editor = "light"
 M.viewOnEdit = {
-    enabled = true,
+    enabled = false,
     replace = false
 }
 M.direction = "vsplit"
