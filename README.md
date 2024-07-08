@@ -24,7 +24,7 @@ Note: Telescope (And as such, plenary.nvim) are required respectively to open th
 use {
     "Al0den/notion.nvim",
     requires = { 'nvim-telescope/telescope.nvim', 'nvim-lua/plenary.nvim' },
-    after = { 'nvim-lua/plenary.nvim' }
+    after = { 'nvim-lua/plenary.nvim' },
     config = function()
         require"notion".setup()
     end
