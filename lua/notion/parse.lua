@@ -177,10 +177,12 @@ M.eventList = function(opts)
                 end
             end
         elseif v.parent.type == "page_id" then
-            table.insert(data, {
-                displayName = v.properties.title.title[1].plain_text,
-                id = v.id
-            })
+            if(v.properties.title ~= nil and v.properties.title.title ~= nil and v.properties.title.title[1] ~= nil) then
+                table.insert(data, {
+                    displayName = v.properties.title.title[1].plain_text,
+                    id = v.id
+                })
+            end
         end
     end
     return data
