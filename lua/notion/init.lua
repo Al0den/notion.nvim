@@ -84,16 +84,21 @@ end
 --Make sure all files are created (Probably a better way to do this?)
 local function initialiseFiles()
     local path = vim.fn.stdpath("data") .. "/notion/"
+    local files = { "data.txt", "prev.txt", "saved.txt", "temp.md", "tempData.txt", "tempJson.json", "reminders.txt", "currentJob.txt" }
+
+    -- Create directory if it doesn't exist
     os.execute("mkdir -p " .. path)
-    os.execute("touch " .. path .. "data.txt")
-    os.execute("touch " .. path .. "prev.txt")
-    os.execute("touch " .. path .. "saved.txt")
-    os.execute("touch " .. path .. "temp.md")
-    os.execute("touch " .. path .. "tempData.txt")
-    os.execute("touch " .. path .. "tempJson.json")
-    os.execute("touch " .. path .. "reminders.txt")
-    os.execute("touch " .. path .. "currentJob.txt")
-    os.execute("touch " .. path .. "prev.txt")
+
+    -- Create files if they don't exist
+    for _, file in ipairs(files) do
+        local filepath = path .. file
+        local f = io.open(filepath, "a")
+        if f then
+            f:close()
+        end
+    end
+
+    -- Create data subdirectory if it doesn't exist
     os.execute("mkdir -p " .. path .. "data/")
 end
 
