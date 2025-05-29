@@ -180,7 +180,9 @@ M.page = function(data, id, _, open)
             local markdown = ""
             if richText == nil then return "" end
             for _, value in ipairs(richText) do
-                local text = value.text.content
+               
+                local text = value.text and value.text.content or ""
+
                 local annotations = value.annotations
                 if annotations.bold then
                     text = "**" .. text .. "**"
