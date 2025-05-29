@@ -235,27 +235,50 @@ M.eventPreview = function(data)
         local function parseRichText(richText)
             local markdown = ""
             for _, value in ipairs(richText) do
-                local text = value.text.content
-                local annotations = value.annotations
-                if annotations.bold then
-                    text = "**" .. text .. "**"
+                local current_text = ""
+                if value then
+                    -- Use plain_text if available, as it's the canonical representation
+                    if value.plain_text ~= nil then
+                        current_text = value.plain_text
+                    -- Fallback for text type if plain_text is somehow missing but text.content is there
+                    elseif value.type == "text" and value.text and value.text.content ~= nil then
+                        current_text = value.text.content
+                    end
                 end
-                if annotations.italic then
-                    text = "_" .. text .. "_"
+
+                -- Apply link if href is present at the top level of the rich text object
+                if value and value.href then
+                    current_text = "[" .. current_text .. "](" .. value.href .. ")"
+                -- Else, handle specific link structure for text objects if no top-level href
+                elseif value and value.type == "text" and value.text and value.text.link and value.text.link.url then
+                    -- Default to current_text (derived from plain_text or initial text.content) for link display
+                    local link_display_text = current_text
+                    -- Prefer text.content for the link's display text if it's specifically available and non-empty
+                    if value.text.content and string.len(value.text.content) > 0 then
+                        link_display_text = value.text.content
+                    end
+                    current_text = "[" .. link_display_text .. "](" .. value.text.link.url .. ")"
                 end
-                if annotations.strikethrough then
-                    text = "~~" .. text .. "~~"
+
+                local annotations = value and value.annotations
+                if annotations then
+                    if annotations.bold then
+                        current_text = "**" .. current_text .. "**"
+                    end
+                    if annotations.italic then
+                        current_text = "_" .. current_text .. "_"
+                    end
+                    if annotations.strikethrough then
+                        current_text = "~~" .. current_text .. "~~"
+                    end
+                    if annotations.underline then
+                        current_text = "__" .. current_text .. "__"
+                    end
+                    if annotations.code then
+                        current_text = "`" .. current_text .. "`"
+                    end
                 end
-                if annotations.underline then
-                    text = "__" .. text .. "__"
-                end
-                if annotations.code then
-                    text = "`" .. text .. "`"
-                end
-                if value.type == "link" then
-                    text = "[" .. text .. "](" .. value.url .. ")"
-                end
-                markdown = markdown .. text
+                markdown = markdown .. current_text
             end
             return markdown
         end
