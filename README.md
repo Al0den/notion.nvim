@@ -114,7 +114,7 @@ require"notion".setup {
     viewOnEdit = {
         enabled = true, --Enable double window, view and edit simultaneously
         replace = false --Replace current window with preview window
-    }
+    },
     direction = "vsplit", --Direction windows will be opened in
     noEvent = "No events",
     debug = false --Enable some error messages on failed API calls
