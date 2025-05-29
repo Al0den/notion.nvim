@@ -33,7 +33,12 @@ use {
 
 [**vim-plug**](https://github.com/junegunn)
 ```lua
-Plug 'Al0den/tester.nvim'
+" Dependencies:
+Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-lua/plenary.nvim'
+
+" Actual Plugin:
+Plug 'Al0den/notion.nvim' 
 
 lua << END
 require"notion".setup()
