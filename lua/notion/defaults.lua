@@ -1,7 +1,7 @@
 local M = {}
 
 M.autoUpdate = true
-M.open = "notion"
+M.open = "browser"
 M.keys = {
     deleteKey = "d",
     openNotion = "o",

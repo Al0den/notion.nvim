@@ -29,10 +29,29 @@ local editItem = function(prompt_bufnr)
 end
 
 local openNotion = function(_)
-    if require "notion".opts.open == "notion" then
-        os.execute("open notion://www.notion.so")
+    local function command_exists(cmd)
+        local check = io.popen("command -v " .. cmd .. " 2>/dev/null")
+        if check then
+            local result = check:read("*l")
+            check:close()
+            return result ~= nil
+        end
+        return false
+    end
+    if command_exists("open") then
+        if require "notion".opts.open == "notion" then
+            os.execute("open notion://www.notion.com")
+        else
+            os.execute("open https://www.notion.com")
+        end
+    elseif command_exists("xdg-open") then
+        if require "notion".opts.open == "notion" then
+            os.execute("xdg-open notion://www.notion.com")
+        else
+            os.execute("xdg-open https://www.notion.com")
+        end
     else
-        os.execute("open https://www.notion.so")
+        print("No known command to open notion")
     end
 end
 
