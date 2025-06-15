@@ -33,7 +33,12 @@ use {
 
 [**vim-plug**](https://github.com/junegunn)
 ```lua
-Plug 'Al0den/tester.nvim'
+" Dependencies:
+Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-lua/plenary.nvim'
+
+" Actual Plugin:
+Plug 'Al0den/notion.nvim' 
 
 lua << END
 require"notion".setup()
@@ -114,7 +119,7 @@ require"notion".setup {
     viewOnEdit = {
         enabled = true, --Enable double window, view and edit simultaneously
         replace = false --Replace current window with preview window
-    }
+    },
     direction = "vsplit", --Direction windows will be opened in
     noEvent = "No events",
     debug = false --Enable some error messages on failed API calls
